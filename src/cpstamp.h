@@ -48,13 +48,18 @@ typedef struct Stamp Stamp;
 
 typedef struct Categoria Categoria;
 
+extern SDL_Rect stamp_rect;
+
 int iniciarCPStamp (void);
 Categoria *abrir_cat (int tipo, char *nombre, char *clave);
 
 Categoria *crear_cat (int tipo, char *nombre, char *clave);
 void registrar_estampa (Categoria *cat, int id, char *titulo, int categoria, int dificultad);
 void cerrar_registro (Categoria *cat);
+void earn_stamp (Categoria *c, int id);
 
+void restaurar_dibujado (SDL_Surface *screen);
+void dibujar_estampa (SDL_Surface *screen, int save);
 
 #endif /* __CP_STAMP_H__ */
 

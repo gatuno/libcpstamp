@@ -93,6 +93,9 @@ SDL_Surface *save_screen;
 
 int stamp_queue[10];
 int stamp_queue_start, stamp_queue_end;
+int stamp_timer;
+
+SDL_Rect stamp_rect;
 
 int iniciarCPStamp (void) {
 	int g, h;
@@ -114,7 +117,7 @@ int iniciarCPStamp (void) {
 	
 	save_screen = SDL_AllocSurface (SDL_SWSURFACE, stamp_images[IMG_STAMP_PANEL]->w, stamp_images[IMG_STAMP_PANEL]->h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 	
-	stamp_queue_start = stamp_queue_end = 0;
+	stamp_timer = stamp_queue_start = stamp_queue_end = 0;
 }
 
 void earn_stamp (Categoria *c, int id) {
@@ -137,64 +140,75 @@ void earn_stamp (Categoria *c, int id) {
 }
 
 void dibujar_estampa (SDL_Surface *screen, int save) {
-	SDL_Rect rect;
-	static int timer = 0;
-	
 	if (stamp_queue_start == stamp_queue_end) return;
 	
-	if (save) {
-		rect.x = 392; rect.y = 0;
-		rect.w = stamp_images[IMG_STAMP_PANEL]->w;
-		rect.h = stamp_images[IMG_STAMP_PANEL]->h;
+	if (stamp_timer >= 8 && save) {
+		stamp_rect.x = 392; stamp_rect.y = 0;
+		stamp_rect.w = stamp_images[IMG_STAMP_PANEL]->w;
+		stamp_rect.h = stamp_images[IMG_STAMP_PANEL]->h;
 		
-		SDL_BlitSurface (screen, &rect, save_screen, NULL);
+		SDL_BlitSurface (screen, &stamp_rect, save_screen, NULL);
 	}
 	
-	if (timer >= 8 && timer < 56) {
-		rect.h = stamp_images[IMG_STAMP_PANEL]->h;
-		rect.w = stamp_images[IMG_STAMP_PANEL]->w;
-		rect.x = 392;
-		switch (timer) {
+	if (stamp_timer < 56) {
+		stamp_rect.h = stamp_images[IMG_STAMP_PANEL]->h;
+		stamp_rect.w = stamp_images[IMG_STAMP_PANEL]->w;
+		stamp_rect.x = 392;
+		switch (stamp_timer) {
 			case 8:
-				rect.y = 20 - stamp_images[IMG_STAMP_PANEL]->h;
+				stamp_rect.y = 20 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 9:
-				rect.y = 40 - stamp_images[IMG_STAMP_PANEL]->h;
+				stamp_rect.y = 40 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 10:
-				rect.y = 53 - stamp_images[IMG_STAMP_PANEL]->h;
+				stamp_rect.y = 53 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 11:
-				rect.y = 66 - stamp_images[IMG_STAMP_PANEL]->h;
+				stamp_rect.y = 66 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 12:
-				rect.y = 72 - stamp_images[IMG_STAMP_PANEL]->h;
+				stamp_rect.y = 72 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 13:
-				rect.y = 78 - stamp_images[IMG_STAMP_PANEL]->h;
+				stamp_rect.y = 78 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 52:
-				rect.y = 77 - stamp_images[IMG_STAMP_PANEL]->h;
+				stamp_rect.y = 77 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 53:
-				rect.y = 67 - stamp_images[IMG_STAMP_PANEL]->h;
+				stamp_rect.y = 67 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 54:
-				rect.y = 51 - stamp_images[IMG_STAMP_PANEL]->h;
+				stamp_rect.y = 51 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 55:
-				rect.y = 29 - stamp_images[IMG_STAMP_PANEL]->h;
+				stamp_rect.y = 29 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 		}
-		if (timer > 13 && timer < 52) {
-			rect.y = 0;
+		if (stamp_timer > 13 && stamp_timer < 52) {
+			stamp_rect.y = 0;
 		}
 		
-		SDL_BlitSurface (stamp_images[IMG_STAMP_PANEL], NULL, screen, &rect);
-		timer++;
-	} else {
-		timer = 0;
+		if (stamp_timer >= 8) SDL_BlitSurface (stamp_images[IMG_STAMP_PANEL], NULL, screen, &stamp_rect);
+		
+		stamp_timer++;
+	} else if (stamp_timer >= 56) {
+		stamp_timer = 0;
 		stamp_queue_start = (stamp_queue_start + 1) % 10;
+	}
+}
+
+void restaurar_dibujado (SDL_Surface *screen) {
+	SDL_Rect rect;
+	
+	if (stamp_timer > 8 && stamp_timer <= 56) {
+		rect.x = 392;
+		rect.y = 0;
+		rect.h = stamp_images[IMG_STAMP_PANEL]->h;
+		rect.w = stamp_images[IMG_STAMP_PANEL]->w;
+		
+		SDL_BlitSurface (save_screen, NULL, screen, &rect);
 	}
 }
 
