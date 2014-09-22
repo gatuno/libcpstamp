@@ -1,0 +1,14 @@
+Estructura del archivo de estampas
+
+Versión 0, inicial
+
+[uint32_t] 4 bytes con el número de versión del archivo
+[uint32_t] 4 bytes con la cantidad de estampas en el archivo
+
+Cada estampa contiene:
+	[uint32_t] ID de la estampa
+	[uint32_t] Cantidad de bytes del título
+		[string] Cadena del titulo, terminada por el caracter \0
+	[uint32_t] Categoria
+	[uint32_t] Dificultad
+	[uint32_t] Booleano, ganada o no
