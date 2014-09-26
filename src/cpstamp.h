@@ -49,6 +49,7 @@ typedef struct Stamp Stamp;
 typedef struct Categoria Categoria;
 
 extern SDL_Rect stamp_rect;
+extern int activar_estampa;
 
 int iniciarCPStamp (void);
 

@@ -100,6 +100,7 @@ int stamp_queue_start, stamp_queue_end;
 int stamp_timer;
 
 SDL_Rect stamp_rect;
+int activar_estampa;
 
 int iniciarCPStamp (void) {
 	int g, h;
@@ -123,7 +124,7 @@ int iniciarCPStamp (void) {
 	
 	stamp_sound_earn = Mix_LoadWAV (GAMEDATA_DIR "sounds/earn.wav");
 	
-	stamp_timer = stamp_queue_start = stamp_queue_end = 0;
+	activar_estampa = stamp_timer = stamp_queue_start = stamp_queue_end = 0;
 }
 
 void earn_stamp (Categoria *cat, int id) {
@@ -134,6 +135,7 @@ void earn_stamp (Categoria *cat, int id) {
 	while (s != NULL) {
 		if (s->id == id) {
 			if (!s->ganada) {
+				activar_estampa = 1;
 				s->ganada = TRUE;
 				stamp_queue [stamp_queue_end] = id;
 				stamp_queue_end = (stamp_queue_end + 1) % 10;
@@ -151,7 +153,10 @@ void dibujar_estampa (SDL_Surface *screen, Categoria *cat, int save) {
 	static Stamp *local;
 	
 	if (cat == NULL) return;
-	if (stamp_queue_start == stamp_queue_end) return;
+	if (stamp_queue_start == stamp_queue_end) {
+		activar_estampa = 0;
+		return;
+	}
 	
 	if (stamp_timer == 0) {
 		/* Encontrar la estampa a mostrar */
@@ -350,7 +355,7 @@ Categoria *abrir_cat (int tipo, char *nombre, char *clave) {
 		last = s;
 	}
 	
-	last->sig == NULL;
+	last->sig = NULL;
 	
 	return abierta;
 }
