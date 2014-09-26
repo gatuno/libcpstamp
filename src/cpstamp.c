@@ -45,6 +45,8 @@ const char *home_directory = NULL;
 struct Stamp {
 	int id;
 	char *titulo;
+	char *descripcion;
+	char *imagen;
 	
 	int categoria;
 	int dificultad;
@@ -124,10 +126,10 @@ int iniciarCPStamp (void) {
 	stamp_timer = stamp_queue_start = stamp_queue_end = 0;
 }
 
-void earn_stamp (Categoria *c, int id) {
+void earn_stamp (Categoria *cat, int id) {
 	Stamp *s;
 	
-	s = c->lista;
+	s = cat->lista;
 	
 	while (s != NULL) {
 		if (s->id == id) {
@@ -143,16 +145,17 @@ void earn_stamp (Categoria *c, int id) {
 	}
 }
 
-void dibujar_estampa (SDL_Surface *screen, Categoria *c, int save) {
+void dibujar_estampa (SDL_Surface *screen, Categoria *cat, int save) {
 	SDL_Rect rect;
 	int imagen;
 	static Stamp *local;
 	
+	if (cat == NULL) return;
 	if (stamp_queue_start == stamp_queue_end) return;
 	
 	if (stamp_timer == 0) {
 		/* Encontrar la estampa a mostrar */
-		local = c->lista;
+		local = cat->lista;
 		
 		while (local != NULL) {
 			if (local->id == stamp_queue[stamp_queue_start]) {
@@ -281,7 +284,7 @@ Categoria *abrir_cat (int tipo, char *nombre, char *clave) {
 	
 	sprintf (buf, "%s/.cpstamps/%s", home_directory, clave);
 	
-	fd = open (buf, O_RDONLY);
+	fd = open (buf, O_RDWR | O_CREAT, 0644);
 	
 	if (fd < 0) {
 		if (errno == ENOENT) {
@@ -289,9 +292,6 @@ Categoria *abrir_cat (int tipo, char *nombre, char *clave) {
 		}
 		perror ("Falló al abrir el archivo de estampas");
 	}
-	
-	read (fd, &temp, sizeof (uint32_t));
-	printf ("Abriendo el archivo de estampas %s, versión %i\n", clave, temp);
 	
 	abierta = (Categoria *) malloc (sizeof (Categoria));
 	
@@ -302,8 +302,20 @@ Categoria *abrir_cat (int tipo, char *nombre, char *clave) {
 	abierta->nombre = nombre;
 	abierta->tipo = tipo;
 	abierta->fd = fd;
+	abierta->lista = NULL;
 	
-	read (fd, &temp, sizeof (uint32_t));
+	if (read (fd, &temp, sizeof (uint32_t)) == 0) {
+		/* El archivo no existe, así que se ignora y se crea la estructura */
+		return abierta;
+	}
+	
+	printf ("Abriendo el archivo de estampas %s, versión %i\n", clave, temp);
+	
+	if (read (fd, &temp, sizeof (uint32_t)) == 0) {
+		/* Se llegó al fin de archivo, ignorar y retornar la estructura */
+		return abierta;
+	}
+	
 	n_stampas = temp;
 	
 	for (g = 0; g < n_stampas; g++) {
@@ -343,59 +355,7 @@ Categoria *abrir_cat (int tipo, char *nombre, char *clave) {
 	return abierta;
 }
 
-Categoria *crear_cat (int tipo, char *nombre, char *clave) {
-	char buf[4096];
-	DIR *p;
-	int fd;
-	uint32_t temp;
-	int g, n_stampas;
-	Categoria *abierta;
-	Stamp *s, *last;
-	
-	printf ("Abriendo categoria: %s\n", clave);
-	/* Conseguir el directorio del usuario actual */
-	get_home ();
-	
-	if (home_directory == NULL) return NULL;
-	
-	printf ("Home final: %s\n", home_directory);
-	sprintf (buf, "%s/.cpstamps/", home_directory);
-	
-	p = opendir (buf);
-	
-	if (p == NULL) {
-		/* Falló al intentar abrir el directorio,
-		 * Si el error es no existe, intentar crear el directorio */
-		if (errno == ENOENT) {
-			if (mkdir (buf, 0777) < 0) {
-				perror ("Falló al crear el directorio de configuración de estampas");
-			}
-		} else {
-			perror ("Falló al abrir el directorio de estampas");
-		}
-	} else {
-		closedir (p);
-	}
-	
-	sprintf (buf, "%s/.cpstamps/%s", home_directory, clave);
-	
-	fd = open (buf, O_WRONLY | O_CREAT, 0644);
-	
-	abierta = (Categoria *) malloc (sizeof (Categoria));
-	
-	if (abierta == NULL) {
-		return NULL;
-	}
-	
-	abierta->nombre = nombre;
-	abierta->tipo = tipo;
-	abierta->fd = fd;
-	abierta->lista = NULL;
-	
-	return abierta;
-}
-
-void registrar_estampa (Categoria *cat, int id, char *titulo, int categoria, int dificultad) {
+void registrar_estampa (Categoria *cat, int id, char *titulo, char *descripcion, char *imagen, int categoria, int dificultad) {
 	Stamp *s, **t;
 	if (cat == NULL) return;
 	
@@ -415,10 +375,32 @@ void registrar_estampa (Categoria *cat, int id, char *titulo, int categoria, int
 	s->ganada = FALSE;
 }
 
+int esta_registrada (Categoria *cat, int id) {
+	Stamp *local;
+	
+	if (cat == NULL) return;
+	local = cat->lista;
+	
+	while (local != NULL) {
+		if (local->id == id) {
+			return TRUE;
+		}
+		
+		local = local->sig;
+	}
+	
+	return FALSE;
+}
+
 void cerrar_registro (Categoria *cat) {
 	uint32_t temp;
 	int g;
 	Stamp *s, *last;
+	
+	if (cat == NULL) return;
+	
+	/* Rebobinar la posición del archivo */
+	lseek (cat->fd, 0, SEEK_SET);
 	
 	/* Contar las estampas */
 	s = cat->lista;
