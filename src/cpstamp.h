@@ -38,7 +38,7 @@ enum {
 };
 
 enum {
-	STAMP_EASY,
+	STAMP_EASY = 0,
 	STAMP_NORMAL,
 	STAMP_HARD,
 	STAMP_EXTREME
@@ -59,7 +59,7 @@ void cerrar_registro (Categoria *cat);
 void earn_stamp (Categoria *c, int id);
 
 void restaurar_dibujado (SDL_Surface *screen);
-void dibujar_estampa (SDL_Surface *screen, int save);
+void dibujar_estampa (SDL_Surface *screen, Categoria *c, int save);
 
 #endif /* __CP_STAMP_H__ */
 

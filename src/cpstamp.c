@@ -91,6 +91,8 @@ const char * stamp_images_names [NUM_IMGS] = {
 SDL_Surface *stamp_images [NUM_IMGS];
 SDL_Surface *save_screen;
 
+Mix_Chunk *stamp_sound_earn;
+
 int stamp_queue[10];
 int stamp_queue_start, stamp_queue_end;
 int stamp_timer;
@@ -117,6 +119,8 @@ int iniciarCPStamp (void) {
 	
 	save_screen = SDL_AllocSurface (SDL_SWSURFACE, stamp_images[IMG_STAMP_PANEL]->w, stamp_images[IMG_STAMP_PANEL]->h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 	
+	stamp_sound_earn = Mix_LoadWAV (GAMEDATA_DIR "sounds/earn.wav");
+	
 	stamp_timer = stamp_queue_start = stamp_queue_end = 0;
 }
 
@@ -139,8 +143,25 @@ void earn_stamp (Categoria *c, int id) {
 	}
 }
 
-void dibujar_estampa (SDL_Surface *screen, int save) {
+void dibujar_estampa (SDL_Surface *screen, Categoria *c, int save) {
+	SDL_Rect rect;
+	int imagen;
+	static Stamp *local;
+	
 	if (stamp_queue_start == stamp_queue_end) return;
+	
+	if (stamp_timer == 0) {
+		/* Encontrar la estampa a mostrar */
+		local = c->lista;
+		
+		while (local != NULL) {
+			if (local->id == stamp_queue[stamp_queue_start]) {
+				break;
+			}
+			
+			local = local->sig;
+		}
+	}
 	
 	if (stamp_timer >= 8 && save) {
 		stamp_rect.x = 392; stamp_rect.y = 0;
@@ -165,6 +186,7 @@ void dibujar_estampa (SDL_Surface *screen, int save) {
 				stamp_rect.y = 53 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 11:
+				Mix_PlayChannel (-1, stamp_sound_earn, 0);
 				stamp_rect.y = 66 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 12:
@@ -190,7 +212,20 @@ void dibujar_estampa (SDL_Surface *screen, int save) {
 			stamp_rect.y = 0;
 		}
 		
-		if (stamp_timer >= 8) SDL_BlitSurface (stamp_images[IMG_STAMP_PANEL], NULL, screen, &stamp_rect);
+		if (stamp_timer >= 8) {
+			rect.y = stamp_rect.y + 6;
+			SDL_BlitSurface (stamp_images[IMG_STAMP_PANEL], NULL, screen, &stamp_rect);
+			
+			if (local->categoria == STAMP_TYPE_GAME) {
+				imagen = IMG_STAMP_GAME_EASY + local->dificultad;
+			}
+			
+			rect.x = 416 + (77 - stamp_images[imagen]->w) / 2;
+			rect.w = stamp_images[imagen]->w;
+			rect.h = stamp_images[imagen]->h;
+			
+			SDL_BlitSurface (stamp_images[imagen], NULL, screen, &rect);
+		}
 		
 		stamp_timer++;
 	} else if (stamp_timer >= 56) {
