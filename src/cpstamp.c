@@ -92,6 +92,9 @@ const char * stamp_images_names [NUM_IMGS] = {
 
 SDL_Surface *stamp_images [NUM_IMGS];
 SDL_Surface *save_screen;
+SDL_Surface *stamp_earned[2];
+
+TTF_Font *font;
 
 Mix_Chunk *stamp_sound_earn;
 
@@ -104,6 +107,7 @@ int activar_estampa;
 
 int iniciarCPStamp (void) {
 	int g, h;
+	SDL_Color blanco, negro;
 	
 	/* Conseguir el directorio del usuario actual */
 	get_home ();
@@ -125,6 +129,26 @@ int iniciarCPStamp (void) {
 	stamp_sound_earn = Mix_LoadWAV (GAMEDATA_DIR "sounds/earn.wav");
 	
 	activar_estampa = stamp_timer = stamp_queue_start = stamp_queue_end = 0;
+	
+	if (!TTF_WasInit ()) {
+		TTF_Init ();
+	}
+	
+	if (TTF_WasInit ()) {
+		font = TTF_OpenFont (GAMEDATA_DIR "burbanksb.ttf", 11);
+		
+		if (font != NULL) {
+			blanco.r = blanco.g = blanco.b = 255;
+			negro.r = negro.g = negro.b = 0;
+			
+			stamp_earned[0] = TTF_RenderUTF8_Blended (font, "Stamp Earned!", negro);
+			stamp_earned[1] = TTF_RenderUTF8_Blended (font, "Stamp Earned!", blanco);
+		} else {
+			stamp_earned [0] = stamp_earned [1] = NULL;
+		}
+	} else {
+		stamp_earned [0] = stamp_earned [1] = NULL;
+	}
 }
 
 void earn_stamp (Categoria *cat, int id) {
@@ -223,6 +247,17 @@ void dibujar_estampa (SDL_Surface *screen, Categoria *cat, int save) {
 		if (stamp_timer >= 8) {
 			rect.y = stamp_rect.y + 6;
 			SDL_BlitSurface (stamp_images[IMG_STAMP_PANEL], NULL, screen, &stamp_rect);
+			stamp_rect.y = 0; stamp_rect.h = stamp_images[IMG_STAMP_PANEL]->h;
+			
+			local = stamp_rect.y;
+			
+			rect.x = 97; rect.y = local + 22;
+			rect.w = stamp_earned[0]->w; rect.h = stamp_earned[0]->h;
+			SDL_BlitSurface (stamp_earned[0], NULL, screen, &rect);
+			
+			rect.x = 95; rect.y = local + 20;
+			rect.w = stamp_earned[1]->w; rect.h = stamp_earned[1]->h;
+			SDL_BlitSurface (stamp_earned[1], NULL, screen, &rect);
 			
 			if (local->categoria == STAMP_TYPE_GAME) {
 				imagen = IMG_STAMP_GAME_EASY + local->dificultad;
@@ -374,7 +409,7 @@ void registrar_estampa (Categoria *cat, int id, char *titulo, char *descripcion,
 	*t = s;
 	
 	s->id = id;
-	s->titulo = titulo;
+	s->titulo = strdup (titulo);
 	s->categoria = categoria;
 	s->dificultad = dificultad;
 	s->ganada = FALSE;
@@ -431,6 +466,8 @@ void cerrar_registro (Categoria *cat) {
 		write (cat->fd, &temp, sizeof (uint32_t));
 		
 		write (cat->fd, s->titulo, temp * sizeof (char));
+		
+		free (s->titulo);
 		
 		temp = s->categoria;
 		write (cat->fd, &temp, sizeof (uint32_t));
