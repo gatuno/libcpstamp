@@ -147,6 +147,7 @@ int iniciarCPStamp (void) {
 			stamp_earned [0] = stamp_earned [1] = NULL;
 		}
 	} else {
+		font = NULL;
 		stamp_earned [0] = stamp_earned [1] = NULL;
 	}
 }
@@ -175,6 +176,7 @@ void dibujar_estampa (SDL_Surface *screen, Categoria *cat, int save) {
 	SDL_Rect rect;
 	int imagen;
 	static Stamp *local;
+	static SDL_Surface *subtext[2];
 	
 	if (cat == NULL) return;
 	if (stamp_queue_start == stamp_queue_end) {
@@ -183,6 +185,7 @@ void dibujar_estampa (SDL_Surface *screen, Categoria *cat, int save) {
 	}
 	
 	if (stamp_timer == 0) {
+		SDL_Color blanco, negro;
 		/* Encontrar la estampa a mostrar */
 		local = cat->lista;
 		
@@ -192,6 +195,14 @@ void dibujar_estampa (SDL_Surface *screen, Categoria *cat, int save) {
 			}
 			
 			local = local->sig;
+		}
+		
+		if (font != NULL) {
+			blanco.r = blanco.g = blanco.b = 255;
+			negro.r = negro.g = negro.b = 0;
+			
+			subtext[0] = TTF_RenderUTF8_Blended (font, local->titulo, negro);
+			subtext[1] = TTF_RenderUTF8_Blended (font, local->titulo, blanco);
 		}
 	}
 	
@@ -240,30 +251,41 @@ void dibujar_estampa (SDL_Surface *screen, Categoria *cat, int save) {
 				stamp_rect.y = 29 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 		}
+		
 		if (stamp_timer > 13 && stamp_timer < 52) {
 			stamp_rect.y = 0;
 		}
 		
 		if (stamp_timer >= 8) {
-			rect.y = stamp_rect.y + 6;
+			imagen = stamp_rect.y;
+			
 			SDL_BlitSurface (stamp_images[IMG_STAMP_PANEL], NULL, screen, &stamp_rect);
 			stamp_rect.y = 0; stamp_rect.h = stamp_images[IMG_STAMP_PANEL]->h;
 			
-			local = stamp_rect.y;
-			
-			rect.x = 97; rect.y = local + 22;
+			/* Dibujar el texto de "Estampa ganada" */
+			rect.x = 492; rect.y = imagen + 22;
 			rect.w = stamp_earned[0]->w; rect.h = stamp_earned[0]->h;
 			SDL_BlitSurface (stamp_earned[0], NULL, screen, &rect);
 			
-			rect.x = 95; rect.y = local + 20;
+			rect.x = 490; rect.y = imagen + 20;
 			rect.w = stamp_earned[1]->w; rect.h = stamp_earned[1]->h;
 			SDL_BlitSurface (stamp_earned[1], NULL, screen, &rect);
 			
+			/* Dibujar subtitulo */
+			rect.x = 492; rect.y = imagen + 42;
+			rect.w = stamp_earned[0]->w; rect.h = stamp_earned[0]->h;
+			SDL_BlitSurface (subtext[0], NULL, screen, &rect);
+			
+			rect.x = 490; rect.y = imagen + 40;
+			rect.w = stamp_earned[1]->w; rect.h = stamp_earned[1]->h;
+			SDL_BlitSurface (subtext[1], NULL, screen, &rect);
+			
+			rect.y = imagen + 6;
 			if (local->categoria == STAMP_TYPE_GAME) {
 				imagen = IMG_STAMP_GAME_EASY + local->dificultad;
 			}
 			
-			rect.x = 416 + (77 - stamp_images[imagen]->w) / 2;
+			rect.x = 410 + (73 - stamp_images[imagen]->w) / 2;
 			rect.w = stamp_images[imagen]->w;
 			rect.h = stamp_images[imagen]->h;
 			
@@ -274,6 +296,9 @@ void dibujar_estampa (SDL_Surface *screen, Categoria *cat, int save) {
 	} else if (stamp_timer >= 56) {
 		stamp_timer = 0;
 		stamp_queue_start = (stamp_queue_start + 1) % 10;
+		
+		SDL_FreeSurface (subtext[0]);
+		SDL_FreeSurface (subtext[1]);
 	}
 }
 
@@ -299,11 +324,9 @@ Categoria *abrir_cat (int tipo, char *nombre, char *clave) {
 	Categoria *abierta;
 	Stamp *s, *last;
 	
-	printf ("Abriendo categoria: %s\n", clave);
 	
 	if (home_directory == NULL) return NULL;
 	
-	printf ("Home final: %s\n", home_directory);
 	sprintf (buf, "%s/.cpstamps/", home_directory);
 	
 	p = opendir (buf);
@@ -349,7 +372,6 @@ Categoria *abrir_cat (int tipo, char *nombre, char *clave) {
 		return abierta;
 	}
 	
-	printf ("Abriendo el archivo de estampas %s, versión %i\n", clave, temp);
 	
 	if (read (fd, &temp, sizeof (uint32_t)) == 0) {
 		/* Se llegó al fin de archivo, ignorar y retornar la estructura */
@@ -489,7 +511,6 @@ void cerrar_registro (Categoria *cat) {
 
 void get_home (void) {
 	if (home_directory != NULL) return;
-	printf ("Entrando a get_home\n");
 	struct passwd *entry;
 	
 	while ((entry = getpwent ()) != NULL) {
