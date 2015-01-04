@@ -5,7 +5,11 @@ gamedatadir = $(pkgdatadir)/data
 lib_LTLIBRARIES = libcpstamp.la
 libcpstamp_la_SOURCES = cpstamp.c cpstamp.h
 
-include_HEADERS = cpstamp.h
+libcpstampdir = $(includedir)/libcpstamp
+libcpstamp_HEADERS = cpstamp.h
+
+pkgconfigdir = $(libdir)/pkgconfig
+dist_pkgconfig_DATA = cpstamp.pc
 
 libcpstamp_la_CPPFLAGS = -DGAMEDATA_DIR=\"$(gamedatadir)/\" -DLOCALEDIR=\"$(localedir)\" $(AM_CPPFLAGS)
 libcpstamp_la_CFLAGS = $(SDL_CFLAGS) $(SDL_image_CFLAGS) $(SDL_mixer_CFLAGS) $(SDL_ttf_LIBS) $(AM_CFLAGS)

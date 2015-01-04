@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: CP Stamp library
+Description: Client Library for drawing Club Penguin Stamps on minigames.
+Version: @VERSION@
+Libs: -L${libdir} -lcpstamp
+Cflags: -I${includedir}/libcpstamp

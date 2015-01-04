@@ -1,4 +1,4 @@
-AC_INIT([Club Penguin Stamp Library], [0.9], [], [libcpstamp])
+AC_INIT([Club Penguin Stamp Library], [0.9.1], [], [libcpstamp])
 
 AC_REVISION([Revision 1])
 
@@ -56,6 +56,7 @@ AC_CONFIG_FILES([
                  Makefile
                  src/Makefile
                  data/Makefile
+                 src/cpstamp.pc
 ])
 
 AC_OUTPUT
