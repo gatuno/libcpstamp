@@ -27,7 +27,9 @@
 
 #include <stdint.h>
 #include <string.h>
+#ifndef __MINGW32__
 #include <pwd.h>
+#endif
 
 #include <unistd.h>
 #include <dirent.h>
@@ -68,8 +70,6 @@ struct Categoria {
 /* Prototipos privados */
 void get_home (void);
 
-SDL_Surface *pantalla;
-
 enum {
 	IMG_STAMP_PANEL,
 	
@@ -80,6 +80,10 @@ enum {
 	
 	NUM_IMGS
 };
+
+#ifdef __MINGW32__
+#	define GAMEDATA_DIR "./"
+#endif
 
 const char * stamp_images_names [NUM_IMGS] = {
 	GAMEDATA_DIR "images/panel_stamp.png",
@@ -335,7 +339,11 @@ Categoria *abrir_cat (int tipo, char *nombre, char *clave) {
 		/* Falló al intentar abrir el directorio,
 		 * Si el error es no existe, intentar crear el directorio */
 		if (errno == ENOENT) {
+#ifdef __MINGW32__
+			if (mkdir (buf) < 0) {
+#else
 			if (mkdir (buf, 0777) < 0) {
+#endif
 				perror ("Falló al crear el directorio de configuración de estampas");
 			}
 		} else {
@@ -510,6 +518,9 @@ void cerrar_registro (Categoria *cat) {
 }
 
 void get_home (void) {
+#ifdef __MINGW32__
+	home_directory = strdup ("./");
+#else
 	if (home_directory != NULL) return;
 	struct passwd *entry;
 	
@@ -520,4 +531,5 @@ void get_home (void) {
 	}
 	
 	endpwent ();
+#endif
 }
