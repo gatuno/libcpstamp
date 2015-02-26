@@ -46,24 +46,24 @@ enum {
 	STAMP_EXTREME
 };
 
-typedef struct Stamp Stamp;
+typedef struct CPStamp CPStamp;
 
-typedef struct Categoria Categoria;
+typedef struct CPStampCategory CPStampCategory;
 
-extern SDL_Rect stamp_rect;
-extern int activar_estampa;
+extern SDL_Rect cpstamp_rect;
+extern int cpstamp_activate;
 
-int iniciarCPStamp (void);
+int CPStamp_Init (void);
 
-Categoria *abrir_cat (int tipo, char *nombre, char *clave);
-void cerrar_registro (Categoria *cat);
+CPStampCategory *CPStamp_Open (int tipo, char *nombre, char *clave);
+void CPStamp_Close (CPStampCategory *cat);
 
-void registrar_estampa (Categoria *cat, int id, char *titulo, char *descripcion, char *imagen, int categoria, int dificultad);
-int esta_registrada (Categoria *cat, int id);
-void earn_stamp (Categoria *cat, int id);
+void CPStamp_Register (CPStampCategory *cat, int id, char *titulo, char *descripcion, char *imagen, int categoria, int dificultad);
+int CPStamp_IsRegistered (CPStampCategory *cat, int id);
+void CPStamp_Earn (CPStampCategory *cat, int id);
 
-void restaurar_dibujado (SDL_Surface *screen);
-void dibujar_estampa (SDL_Surface *screen, Categoria *cat, int save);
+void CPStamp_Restore (SDL_Surface *screen);
+void CPStamp_Draw (SDL_Surface *screen, CPStampCategory *cat, int save);
 
 #endif /* __CP_STAMP_H__ */
 

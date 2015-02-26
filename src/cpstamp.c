@@ -27,9 +27,6 @@
 
 #include <stdint.h>
 #include <string.h>
-#ifndef __MINGW32__
-#include <pwd.h>
-#endif
 
 #include <unistd.h>
 #include <dirent.h>
@@ -40,11 +37,14 @@
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 
+#ifdef __MINGW32__
+#include <windows.h>
+#include <shellapi.h>
+#endif
+
 #include "cpstamp.h"
 
-const char *home_directory = NULL;
-
-struct Stamp {
+struct CPStamp {
 	int id;
 	char *titulo;
 	char *descripcion;
@@ -55,14 +55,14 @@ struct Stamp {
 	
 	int ganada;
 	
-	Stamp *sig;
+	CPStamp *sig;
 };
 
-struct Categoria {
+struct CPStampCategory {
 	char *nombre;
 	int tipo;
 	
-	Stamp *lista;
+	CPStamp *lista;
 	
 	int fd;
 };
@@ -106,10 +106,15 @@ int stamp_queue[10];
 int stamp_queue_start, stamp_queue_end;
 int stamp_timer;
 
-SDL_Rect stamp_rect;
-int activar_estampa;
+SDL_Rect cpcpstamp_rect;
+int cpstamp_activate;
 
-int iniciarCPStamp (void) {
+#ifndef MAX_PATH
+#	define MAX_PATH 2048
+#endif
+char config_directory[MAX_PATH];
+
+int CPStamp_Init (void) {
 	int g, h;
 	SDL_Color blanco, negro;
 	
@@ -132,7 +137,7 @@ int iniciarCPStamp (void) {
 	
 	stamp_sound_earn = Mix_LoadWAV (GAMEDATA_DIR "sounds/earn.wav");
 	
-	activar_estampa = stamp_timer = stamp_queue_start = stamp_queue_end = 0;
+	cpstamp_activate = stamp_timer = stamp_queue_start = stamp_queue_end = 0;
 	
 	if (!TTF_WasInit ()) {
 		TTF_Init ();
@@ -156,15 +161,16 @@ int iniciarCPStamp (void) {
 	}
 }
 
-void earn_stamp (Categoria *cat, int id) {
-	Stamp *s;
+void CPStamp_Earn (CPStampCategory *cat, int id) {
+	CPStamp *s;
 	
+	if (cat == NULL) return;
 	s = cat->lista;
 	
 	while (s != NULL) {
 		if (s->id == id) {
 			if (!s->ganada) {
-				activar_estampa = 1;
+				cpstamp_activate = 1;
 				s->ganada = TRUE;
 				stamp_queue [stamp_queue_end] = id;
 				stamp_queue_end = (stamp_queue_end + 1) % 10;
@@ -176,15 +182,15 @@ void earn_stamp (Categoria *cat, int id) {
 	}
 }
 
-void dibujar_estampa (SDL_Surface *screen, Categoria *cat, int save) {
+void CPStamp_Draw (SDL_Surface *screen, CPStampCategory *cat, int save) {
 	SDL_Rect rect;
 	int imagen;
-	static Stamp *local;
+	static CPStamp *local;
 	static SDL_Surface *subtext[2];
 	
 	if (cat == NULL) return;
 	if (stamp_queue_start == stamp_queue_end) {
-		activar_estampa = 0;
+		cpstamp_activate = 0;
 		return;
 	}
 	
@@ -211,60 +217,60 @@ void dibujar_estampa (SDL_Surface *screen, Categoria *cat, int save) {
 	}
 	
 	if (stamp_timer >= 8 && save) {
-		stamp_rect.x = 392; stamp_rect.y = 0;
-		stamp_rect.w = stamp_images[IMG_STAMP_PANEL]->w;
-		stamp_rect.h = stamp_images[IMG_STAMP_PANEL]->h;
+		cpstamp_rect.x = 392; cpstamp_rect.y = 0;
+		cpstamp_rect.w = stamp_images[IMG_STAMP_PANEL]->w;
+		cpstamp_rect.h = stamp_images[IMG_STAMP_PANEL]->h;
 		
-		SDL_BlitSurface (screen, &stamp_rect, save_screen, NULL);
+		SDL_BlitSurface (screen, &cpstamp_rect, save_screen, NULL);
 	}
 	
 	if (stamp_timer < 56) {
-		stamp_rect.h = stamp_images[IMG_STAMP_PANEL]->h;
-		stamp_rect.w = stamp_images[IMG_STAMP_PANEL]->w;
-		stamp_rect.x = 392;
+		cpstamp_rect.h = stamp_images[IMG_STAMP_PANEL]->h;
+		cpstamp_rect.w = stamp_images[IMG_STAMP_PANEL]->w;
+		cpstamp_rect.x = 392;
 		switch (stamp_timer) {
 			case 8:
-				stamp_rect.y = 20 - stamp_images[IMG_STAMP_PANEL]->h;
+				cpstamp_rect.y = 20 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 9:
-				stamp_rect.y = 40 - stamp_images[IMG_STAMP_PANEL]->h;
+				cpstamp_rect.y = 40 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 10:
-				stamp_rect.y = 53 - stamp_images[IMG_STAMP_PANEL]->h;
+				cpstamp_rect.y = 53 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 11:
 				Mix_PlayChannel (-1, stamp_sound_earn, 0);
-				stamp_rect.y = 66 - stamp_images[IMG_STAMP_PANEL]->h;
+				cpstamp_rect.y = 66 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 12:
-				stamp_rect.y = 72 - stamp_images[IMG_STAMP_PANEL]->h;
+				cpstamp_rect.y = 72 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 13:
-				stamp_rect.y = 78 - stamp_images[IMG_STAMP_PANEL]->h;
+				cpstamp_rect.y = 78 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 52:
-				stamp_rect.y = 77 - stamp_images[IMG_STAMP_PANEL]->h;
+				cpstamp_rect.y = 77 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 53:
-				stamp_rect.y = 67 - stamp_images[IMG_STAMP_PANEL]->h;
+				cpstamp_rect.y = 67 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 54:
-				stamp_rect.y = 51 - stamp_images[IMG_STAMP_PANEL]->h;
+				cpstamp_rect.y = 51 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 			case 55:
-				stamp_rect.y = 29 - stamp_images[IMG_STAMP_PANEL]->h;
+				cpstamp_rect.y = 29 - stamp_images[IMG_STAMP_PANEL]->h;
 				break;
 		}
 		
 		if (stamp_timer > 13 && stamp_timer < 52) {
-			stamp_rect.y = 0;
+			cpstamp_rect.y = 0;
 		}
 		
 		if (stamp_timer >= 8) {
-			imagen = stamp_rect.y;
+			imagen = cpstamp_rect.y;
 			
-			SDL_BlitSurface (stamp_images[IMG_STAMP_PANEL], NULL, screen, &stamp_rect);
-			stamp_rect.y = 0; stamp_rect.h = stamp_images[IMG_STAMP_PANEL]->h;
+			SDL_BlitSurface (stamp_images[IMG_STAMP_PANEL], NULL, screen, &cpstamp_rect);
+			cpstamp_rect.y = 0; cpstamp_rect.h = stamp_images[IMG_STAMP_PANEL]->h;
 			
 			/* Dibujar el texto de "Estampa ganada" */
 			rect.x = 492; rect.y = imagen + 22;
@@ -306,7 +312,7 @@ void dibujar_estampa (SDL_Surface *screen, Categoria *cat, int save) {
 	}
 }
 
-void restaurar_dibujado (SDL_Surface *screen) {
+void CPStamp_Restore (SDL_Surface *screen) {
 	SDL_Rect rect;
 	
 	if (stamp_timer > 8 && stamp_timer <= 56) {
@@ -319,19 +325,18 @@ void restaurar_dibujado (SDL_Surface *screen) {
 	}
 }
 
-Categoria *abrir_cat (int tipo, char *nombre, char *clave) {
+CPStampCategory *CPStamp_Open (int tipo, char *nombre, char *clave) {
 	char buf[4096];
 	DIR *p;
 	int fd;
 	uint32_t temp;
 	int g, n_stampas;
-	Categoria *abierta;
-	Stamp *s, *last;
+	CPStampCategory *abierta;
+	CPStamp *s, *last;
 	
+	if (config_directory[0] == '\0') return NULL;
 	
-	if (home_directory == NULL) return NULL;
-	
-	sprintf (buf, "%s/.cpstamps/", home_directory);
+	sprintf (buf, "%s/.cpstamps/", config_directory);
 	
 	p = opendir (buf);
 	
@@ -353,7 +358,7 @@ Categoria *abrir_cat (int tipo, char *nombre, char *clave) {
 		closedir (p);
 	}
 	
-	sprintf (buf, "%s/.cpstamps/%s", home_directory, clave);
+	sprintf (buf, "%s/.cpstamps/%s", config_directory, clave);
 	
 	fd = open (buf, O_RDWR | O_CREAT, 0644);
 	
@@ -364,7 +369,7 @@ Categoria *abrir_cat (int tipo, char *nombre, char *clave) {
 		perror ("Falló al abrir el archivo de estampas");
 	}
 	
-	abierta = (Categoria *) malloc (sizeof (Categoria));
+	abierta = (CPStampCategory *) malloc (sizeof (CPStampCategory));
 	
 	if (abierta == NULL) {
 		return NULL;
@@ -389,7 +394,7 @@ Categoria *abrir_cat (int tipo, char *nombre, char *clave) {
 	n_stampas = temp;
 	
 	for (g = 0; g < n_stampas; g++) {
-		s = (Stamp *) malloc (sizeof (Stamp));
+		s = (CPStamp *) malloc (sizeof (CPStamp));
 	
 		if (s == NULL) {
 			free (abierta);
@@ -425,11 +430,11 @@ Categoria *abrir_cat (int tipo, char *nombre, char *clave) {
 	return abierta;
 }
 
-void registrar_estampa (Categoria *cat, int id, char *titulo, char *descripcion, char *imagen, int categoria, int dificultad) {
-	Stamp *s, **t;
+void CPStamp_Register (CPStampCategory *cat, int id, char *titulo, char *descripcion, char *imagen, int categoria, int dificultad) {
+	CPStamp *s, **t;
 	if (cat == NULL) return;
 	
-	s = (Stamp *) malloc (sizeof (Stamp));
+	s = (CPStamp *) malloc (sizeof (CPStamp));
 	if (s == NULL) return;
 	s->sig = NULL;
 	
@@ -445,8 +450,8 @@ void registrar_estampa (Categoria *cat, int id, char *titulo, char *descripcion,
 	s->ganada = FALSE;
 }
 
-int esta_registrada (Categoria *cat, int id) {
-	Stamp *local;
+int CPStamp_IsRegistered (CPStampCategory *cat, int id) {
+	CPStamp *local;
 	
 	if (cat == NULL) return;
 	local = cat->lista;
@@ -462,10 +467,10 @@ int esta_registrada (Categoria *cat, int id) {
 	return FALSE;
 }
 
-void cerrar_registro (Categoria *cat) {
+void CPStamp_Close (CPStampCategory *cat) {
 	uint32_t temp;
 	int g;
-	Stamp *s, *last;
+	CPStamp *s, *last;
 	
 	if (cat == NULL) return;
 	
@@ -517,19 +522,54 @@ void cerrar_registro (Categoria *cat) {
 	free (cat);
 }
 
-void get_home (void) {
 #ifdef __MINGW32__
-	home_directory = strdup ("./");
-#else
-	if (home_directory != NULL) return;
-	struct passwd *entry;
+// should be ecl_system_windows.cc ?
+void ApplicationDataPath (char * buffer) {
+	typedef HRESULT (WINAPI *SHGETFOLDERPATH)( HWND, int, HANDLE, DWORD, LPTSTR );
+	#   define CSIDL_FLAG_CREATE 0x8000
+	#   define CSIDL_APPDATA 0x1A
+	#   define SHGFP_TYPE_CURRENT 0
+
+	HINSTANCE shfolder_dll;
+	SHGETFOLDERPATH SHGetFolderPath ;
 	
-	while ((entry = getpwent ()) != NULL) {
-		if (entry->pw_uid == getuid ()) {
-			home_directory = strdup (entry->pw_dir);
+	/* load the shfolder.dll to retreive SHGetFolderPath */
+	if ((shfolder_dll = LoadLibrary("shfolder.dll")) != NULL) {
+		SHGetFolderPath = (SHGETFOLDERPATH)GetProcAddress(shfolder_dll, "SHGetFolderPathA");
+		if (SHGetFolderPath != NULL) {
+			TCHAR szPath[MAX_PATH] = "";
+			
+			/* get the "Application Data" folder for the current user */
+			if (S_OK == SHGetFolderPath (NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, szPath)) {
+				strcpy (buffer, szPath);
+			}
+		} else {
+			buffer[0] = '\0';
 		}
+		FreeLibrary (shfolder_dll);
+	} else {
+		buffer[0] = '\0';
 	}
+}
+#endif
+
+void Personal_ConfigurationDir (char *buffer) {
+	strcpy (buffer, ".");
+
+	if (getenv ("HOME") != 0) {
+		strcpy (buffer, getenv ("HOME"));
+	}
+}
+
+void get_home (void) {
+	config_directory[0] = '\0';
 	
-	endpwent ();
+#if __MINGW32__
+	ApplicationDataPath (config_directory);
+	if (config_directory[0] == '\0') {
+#endif
+		Personal_ConfigurationDir (config_directory);
+#if __MINGW32__
+	}
 #endif
 }
