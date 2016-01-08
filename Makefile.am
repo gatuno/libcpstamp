@@ -1,2 +1,5 @@
+SUBDIRS = po src data
+
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = src data
+
+EXTRA_DIST = build-aux/config.rpath m4/ChangeLog

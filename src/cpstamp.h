@@ -46,14 +46,12 @@ enum {
 	STAMP_EXTREME
 };
 
-typedef struct CPStamp CPStamp;
-
 typedef struct CPStampCategory CPStampCategory;
 
 extern SDL_Rect cpstamp_rect;
 extern int cpstamp_activate;
 
-int CPStamp_Init (void);
+int CPStamp_Init (int argc, char **argv);
 
 CPStampCategory *CPStamp_Open (int tipo, char *nombre, char *clave);
 void CPStamp_Close (CPStampCategory *cat);
@@ -64,6 +62,8 @@ void CPStamp_Earn (CPStampCategory *cat, int id);
 
 void CPStamp_Restore (SDL_Surface *screen);
 void CPStamp_Draw (SDL_Surface *screen, CPStampCategory *cat, int save);
+
+void CPStamp_ClearStamps (CPStampCategory *cat);
 
 #endif /* __CP_STAMP_H__ */
 

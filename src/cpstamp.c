@@ -27,9 +27,8 @@
 
 #include <stdint.h>
 #include <string.h>
-
 #include <unistd.h>
-#include <dirent.h>
+
 #include <errno.h>
 
 #include <SDL.h>
@@ -42,7 +41,18 @@
 #include <shellapi.h>
 #endif
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include <locale.h>
+#include "gettext.h"
+#define _(string) gettext (string)
+
 #include "cpstamp.h"
+#include "path.h"
+
+typedef struct CPStamp CPStamp;
 
 struct CPStamp {
 	int id;
@@ -67,9 +77,6 @@ struct CPStampCategory {
 	int fd;
 };
 
-/* Prototipos privados */
-void get_home (void);
-
 enum {
 	IMG_STAMP_PANEL,
 	
@@ -81,17 +88,13 @@ enum {
 	NUM_IMGS
 };
 
-#ifdef __MINGW32__
-#	define GAMEDATA_DIR "./"
-#endif
-
 const char * stamp_images_names [NUM_IMGS] = {
-	GAMEDATA_DIR "images/panel_stamp.png",
+	"images/panel_stamp.png",
 	
-	GAMEDATA_DIR "images/game_easy.png",
-	GAMEDATA_DIR "images/game_normal.png",
-	GAMEDATA_DIR "images/game_hard.png",
-	GAMEDATA_DIR "images/game_extreme.png"
+	"images/game_easy.png",
+	"images/game_normal.png",
+	"images/game_hard.png",
+	"images/game_extreme.png"
 };
 
 SDL_Surface *stamp_images [NUM_IMGS];
@@ -106,7 +109,7 @@ int stamp_queue[10];
 int stamp_queue_start, stamp_queue_end;
 int stamp_timer;
 
-SDL_Rect cpcpstamp_rect;
+SDL_Rect cpstamp_rect;
 int cpstamp_activate;
 
 #ifndef MAX_PATH
@@ -114,19 +117,28 @@ int cpstamp_activate;
 #endif
 char config_directory[MAX_PATH];
 
-int CPStamp_Init (void) {
+int CPStamp_Init (int argc, char **argv) {
 	int g, h;
 	SDL_Color blanco, negro;
+	char buffer_file[8192];
 	
-	/* Conseguir el directorio del usuario actual */
-	get_home ();
+	/* Conseguir las urls del sistema */
+	initSystemLibPaths (argv[0]);
+	
+	/* Inicializar i18n */
+	setlocale (LC_ALL, "");
+	bindtextdomain (PACKAGE, l10nlib_path);
+	
+	textdomain (PACKAGE);
 	
 	for (g = 0; g < NUM_IMGS; g++) {
-		stamp_images[g] = IMG_Load (stamp_images_names [g]);
+		sprintf (buffer_file, "%s%s", systemdatalib_path, stamp_images_names [g]);
+		stamp_images[g] = IMG_Load (buffer_file);
 		
 		if (stamp_images[g] == NULL) {
 			for (h = 0; h < g; h++) {
 				SDL_FreeSurface (stamp_images[h]);
+				stamp_images[h] = NULL;
 			}
 			
 			return -1;
@@ -135,7 +147,8 @@ int CPStamp_Init (void) {
 	
 	save_screen = SDL_AllocSurface (SDL_SWSURFACE, stamp_images[IMG_STAMP_PANEL]->w, stamp_images[IMG_STAMP_PANEL]->h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 	
-	stamp_sound_earn = Mix_LoadWAV (GAMEDATA_DIR "sounds/earn.wav");
+	sprintf (buffer_file, "%ssounds/earn.wav", systemdatalib_path);
+	stamp_sound_earn = Mix_LoadWAV (buffer_file);
 	
 	cpstamp_activate = stamp_timer = stamp_queue_start = stamp_queue_end = 0;
 	
@@ -144,14 +157,15 @@ int CPStamp_Init (void) {
 	}
 	
 	if (TTF_WasInit ()) {
-		font = TTF_OpenFont (GAMEDATA_DIR "burbanksb.ttf", 11);
+		sprintf (buffer_file, "%sburbanksb.ttf", systemdatalib_path);
+		font = TTF_OpenFont (buffer_file, 11);
 		
 		if (font != NULL) {
 			blanco.r = blanco.g = blanco.b = 255;
 			negro.r = negro.g = negro.b = 0;
 			
-			stamp_earned[0] = TTF_RenderUTF8_Blended (font, "Stamp Earned!", negro);
-			stamp_earned[1] = TTF_RenderUTF8_Blended (font, "Stamp Earned!", blanco);
+			stamp_earned[0] = TTF_RenderUTF8_Blended (font, _("Stamp Earned!"), negro);
+			stamp_earned[1] = TTF_RenderUTF8_Blended (font, _("Stamp Earned!"), blanco);
 		} else {
 			stamp_earned [0] = stamp_earned [1] = NULL;
 		}
@@ -327,38 +341,23 @@ void CPStamp_Restore (SDL_Surface *screen) {
 
 CPStampCategory *CPStamp_Open (int tipo, char *nombre, char *clave) {
 	char buf[4096];
-	DIR *p;
 	int fd;
 	uint32_t temp;
 	int g, n_stampas;
 	CPStampCategory *abierta;
 	CPStamp *s, *last;
 	
-	if (config_directory[0] == '\0') return NULL;
+	if (userdatalib_path == NULL || userdatalib_path[0] == 0) return NULL;
 	
-	sprintf (buf, "%s/.cpstamps/", config_directory);
+	sprintf (buf, "%s/.cpstamps/", userdatalib_path);
 	
-	p = opendir (buf);
-	
-	if (p == NULL) {
-		/* Falló al intentar abrir el directorio,
-		 * Si el error es no existe, intentar crear el directorio */
-		if (errno == ENOENT) {
-#ifdef __MINGW32__
-			if (mkdir (buf) < 0) {
-#else
-			if (mkdir (buf, 0777) < 0) {
-#endif
-				perror ("Falló al crear el directorio de configuración de estampas");
-			}
-		} else {
-			perror ("Falló al abrir el directorio de estampas");
+	if (!folder_exists (buf)) {
+		if (!folder_create (buf)) {
+			return NULL;
 		}
-	} else {
-		closedir (p);
 	}
 	
-	sprintf (buf, "%s/.cpstamps/%s", config_directory, clave);
+	sprintf (buf, "%s/.cpstamps/%s", userdatalib_path, clave);
 	
 	fd = open (buf, O_RDWR | O_CREAT, 0644);
 	
@@ -366,7 +365,7 @@ CPStampCategory *CPStamp_Open (int tipo, char *nombre, char *clave) {
 		if (errno == ENOENT) {
 			return NULL;
 		}
-		perror ("Falló al abrir el archivo de estampas");
+		perror (_("Failed to open Stamps File"));
 	}
 	
 	abierta = (CPStampCategory *) malloc (sizeof (CPStampCategory));
@@ -384,7 +383,6 @@ CPStampCategory *CPStamp_Open (int tipo, char *nombre, char *clave) {
 		/* El archivo no existe, así que se ignora y se crea la estructura */
 		return abierta;
 	}
-	
 	
 	if (read (fd, &temp, sizeof (uint32_t)) == 0) {
 		/* Se llegó al fin de archivo, ignorar y retornar la estructura */
@@ -522,54 +520,15 @@ void CPStamp_Close (CPStampCategory *cat) {
 	free (cat);
 }
 
-#ifdef __MINGW32__
-// should be ecl_system_windows.cc ?
-void ApplicationDataPath (char * buffer) {
-	typedef HRESULT (WINAPI *SHGETFOLDERPATH)( HWND, int, HANDLE, DWORD, LPTSTR );
-	#   define CSIDL_FLAG_CREATE 0x8000
-	#   define CSIDL_APPDATA 0x1A
-	#   define SHGFP_TYPE_CURRENT 0
-
-	HINSTANCE shfolder_dll;
-	SHGETFOLDERPATH SHGetFolderPath ;
+void CPStamp_ClearStamps (CPStampCategory *cat) {
+	CPStamp *s;
 	
-	/* load the shfolder.dll to retreive SHGetFolderPath */
-	if ((shfolder_dll = LoadLibrary("shfolder.dll")) != NULL) {
-		SHGetFolderPath = (SHGETFOLDERPATH)GetProcAddress(shfolder_dll, "SHGetFolderPathA");
-		if (SHGetFolderPath != NULL) {
-			TCHAR szPath[MAX_PATH] = "";
-			
-			/* get the "Application Data" folder for the current user */
-			if (S_OK == SHGetFolderPath (NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, szPath)) {
-				strcpy (buffer, szPath);
-			}
-		} else {
-			buffer[0] = '\0';
-		}
-		FreeLibrary (shfolder_dll);
-	} else {
-		buffer[0] = '\0';
-	}
-}
-#endif
-
-void Personal_ConfigurationDir (char *buffer) {
-	strcpy (buffer, ".");
-
-	if (getenv ("HOME") != 0) {
-		strcpy (buffer, getenv ("HOME"));
-	}
-}
-
-void get_home (void) {
-	config_directory[0] = '\0';
+	if (cat == NULL) return;
+	s = cat->lista;
 	
-#if __MINGW32__
-	ApplicationDataPath (config_directory);
-	if (config_directory[0] == '\0') {
-#endif
-		Personal_ConfigurationDir (config_directory);
-#if __MINGW32__
+	while (s != NULL) {
+		s->ganada = FALSE;
+		s = s->sig;
 	}
-#endif
 }
+
