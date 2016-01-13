@@ -238,7 +238,7 @@ void initSystemLibPaths (const char *argv_0) {
     // "../../..", i.e. the directory the bundle is placed in. This breaks
     // the self-containedness.
 	systemdatalib_path = (char *) malloc (sizeof (char) * (strlen (progdir) + 30));
-	sprintf (systemdatalib_path, "%s/../Resources/data/", progdir);
+	sprintf (systemdatalib_path, "%s/Resources/data/", progdir);
 #else
 	/* Para Linux */
 	systemdatalib_path = GAMEDATA_DIR;

@@ -47,7 +47,7 @@
 
 #include <locale.h>
 #include "gettext.h"
-#define _(string) gettext (string)
+#define _(string) dgettext (PACKAGE, string)
 
 #include "cpstamp.h"
 #include "path.h"
@@ -128,8 +128,6 @@ int CPStamp_Init (int argc, char **argv) {
 	/* Inicializar i18n */
 	setlocale (LC_ALL, "");
 	bindtextdomain (PACKAGE, l10nlib_path);
-	
-	textdomain (PACKAGE);
 	
 	for (g = 0; g < NUM_IMGS; g++) {
 		sprintf (buffer_file, "%s%s", systemdatalib_path, stamp_images_names [g]);
@@ -451,7 +449,7 @@ void CPStamp_Register (CPStampCategory *cat, int id, char *titulo, char *descrip
 int CPStamp_IsRegistered (CPStampCategory *cat, int id) {
 	CPStamp *local;
 	
-	if (cat == NULL) return;
+	if (cat == NULL) return FALSE;
 	local = cat->lista;
 	
 	while (local != NULL) {

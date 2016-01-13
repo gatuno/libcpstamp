@@ -12,7 +12,7 @@ pkgconfigdir = $(libdir)/pkgconfig
 dist_pkgconfig_DATA = cpstamp.pc
 
 libcpstamp_la_CPPFLAGS = -DGAMEDATA_DIR=\"$(gamedatadir)/\" -DLOCALEDIR=\"$(localedir)\" $(AM_CPPFLAGS)
-libcpstamp_la_CFLAGS = $(SDL_CFLAGS) $(SDL_image_CFLAGS) $(SDL_mixer_CFLAGS) $(SDL_ttf_LIBS) $(AM_CFLAGS)
+libcpstamp_la_CFLAGS = $(SDL_CFLAGS) $(SDL_image_CFLAGS) $(SDL_mixer_CFLAGS) $(SDL_ttf_CFLAGS) $(AM_CFLAGS)
 if MACOSX
 # En MAC OS X, hay que ligar/compilar contra los frameworks
 libcpstamp_la_LIBADD = $(SDL_LIBS)
