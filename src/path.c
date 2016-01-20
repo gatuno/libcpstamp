@@ -22,10 +22,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
 #ifdef MACOSX
 // for search paths
 #include "NSSystemDirectories.h"
@@ -40,10 +36,6 @@
 #endif
 
 #include "path.h"
-
-char *systemdatalib_path;
-char *l10nlib_path;
-char *userdatalib_path;
 
 //#ifdef __MINGW32__
 //const char *PathSeparator = "\\";      // for path assembly
@@ -64,17 +56,7 @@ char *userdatalib_path;
 #	define MAX_PATH 2048
 #endif
 
-int folder_exists (const char *fname) {
-	struct stat s;
-	return (stat(fname, &s) == 0 && S_ISDIR(s.st_mode));
-}
-
-int file_exists (const char *fname) {
-	struct stat s;
-	return (stat(fname, &s) == 0 && S_ISREG(s.st_mode));
-}
-
-int split_path (const char *path, char * dir_part, char * filename_part) {
+int cpstamp_split_path (const char *path, char * dir_part, char * filename_part) {
 	int lslash, lnslash;
 	int g;
 	char *dup;
@@ -101,7 +83,7 @@ int split_path (const char *path, char * dir_part, char * filename_part) {
 		// trailing slash
 		dup = strdup (path);
 		dup[lslash] = 0;
-		g = split_path (dup, dir_part, filename_part);
+		g = cpstamp_split_path (dup, dir_part, filename_part);
 		
 		free (dup);
 		return g;
@@ -130,38 +112,9 @@ int split_path (const char *path, char * dir_part, char * filename_part) {
 	return TRUE;
 }
 
-int folder_create (const char *fname) {
-	char *parent_folder;
-	char *sub_folder;
-	int ok = TRUE;
-	
-	if (folder_exists (fname)) return TRUE;
-	
-	parent_folder = strdup (fname);
-	sub_folder = strdup (fname);
-	
-	if (split_path (fname, parent_folder, sub_folder)) {
-		if (!folder_exists (parent_folder)) {
-			ok = folder_create(parent_folder);
-		}
-	}
-	
-	if (ok) {
-		#ifdef __MINGW32__
-		ok = mkdir(fname) == 0;
-		#else
-		ok = mkdir(fname, 0775) == 0;
-		#endif
-	}
-	
-	free (parent_folder);
-	free (sub_folder);
-	return ok;
-}
-
 #ifdef __MINGW32__
 // should be ecl_system_windows.cc ?
-void ApplicationDataPath (char * buffer) {
+static void ApplicationDataPath (char * buffer) {
 	typedef HRESULT (WINAPI *SHGETFOLDERPATH)( HWND, int, HANDLE, DWORD, LPTSTR );
 	#   define CSIDL_FLAG_CREATE 0x8000
 	#   define CSIDL_APPDATA 0x1A
@@ -190,7 +143,7 @@ void ApplicationDataPath (char * buffer) {
 }
 #endif
 
-void initSystemLibPaths (const char *argv_0) {
+void cpstamp_init_paths (const char *argv_0, char **systemdata_path, char **l10n_path, char **userdata_path) {
 	char *progCallPath;
 	int progdirexists;
 	char *progdir;
@@ -218,15 +171,15 @@ void initSystemLibPaths (const char *argv_0) {
 	CFRelease(cffileStr);
 #endif
 	progdir = strdup (progCallPath);
-	progdirexists = split_path (progCallPath, progdir, NULL);
+	progdirexists = cpstamp_split_path (progCallPath, progdir, NULL);
 
 	/* Primero conseguir el system path */
 #ifdef __MINGW32__
 	if (!progdirexists) {
-		systemdatalib_path = "./data/";
+		*systemdata_path = strdup ("./data/");
 	} else {
-		systemdatalib_path = (char *) malloc (strlen (progdir) + 50);
-		sprintf (systemdatalib_path, "%s/data/", progdir);
+		*systemdata_path = (char *) malloc (strlen (progdir) + 50);
+		sprintf (*systemdata_path, "%s/data/", progdir);
 	}
 #elif MACOSX
     // Mac OS X applications are self-contained bundles,
@@ -237,52 +190,48 @@ void initSystemLibPaths (const char *argv_0) {
     // then chdir to ../Resources. The original SDL implementation chdirs to
     // "../../..", i.e. the directory the bundle is placed in. This breaks
     // the self-containedness.
-	systemdatalib_path = (char *) malloc (sizeof (char) * (strlen (progdir) + 30));
-	sprintf (systemdatalib_path, "%s/Resources/data/", progdir);
+	*systemdata_path = (char *) malloc (sizeof (char) * (strlen (progdir) + 30));
+	sprintf (*systemdata_path, "%s/Resources/data/", progdir);
 #else
 	/* Para Linux */
-	systemdatalib_path = GAMEDATA_DIR;
+	*systemdata_path = strdup (GAMEDATA_DIR);
 #endif
 	
 	/* Ahora, conseguir el L10n */
-	l10nlib_path = LOCALEDIR;
 #ifdef __MINGW32__
 	if (progdirexists) {
-		l10nlib_path = (char *) malloc (strlen (progdir) + strlen (l10nlib_path) + 10);
+		*l10n_path = (char *) malloc (strlen (progdir) + strlen (LOCALEDIR) + 10);
 		if (strncmp (LOCALEDIR, "/", 1) == 0 || strncmp (LOCALEDIR, "\\", 1) == 0) {
 			/* No necesita slash final */
-			sprintf (l10nlib_path, "%s%s", progdir, LOCALEDIR);
+			sprintf (*l10n_path, "%s%s", progdir, LOCALEDIR);
 		} else {
-			sprintf (l10nlib_path, "%s/%s", progdir, LOCALEDIR);
+			sprintf (*l10n_path, "%s/%s", progdir, LOCALEDIR);
 		}
 	}
 #elif MACOSX
-	l10nlib_path = (char *) malloc (sizeof (char) * (strlen (progdir) + 30));
-	sprintf (l10nlib_path, "%s/../Resources/locale", progdir);
+	*l10n_path = (char *) malloc (sizeof (char) * (strlen (progdir) + 30));
+	sprintf (l10nlib_path, "%s/Resources/locale", progdir);
+#else
+	/* Para Linux */
+	*l10n_path = strdup (LOCALEDIR);
 #endif
 	
 	/* Ahora conseguir el user path */
 	if (getenv ("HOME") != 0) {
 		pref_path = getenv ("HOME");
 		
-		if (!folder_exists (pref_path)) {
-			if (!folder_create (pref_path)) {
-				fprintf (stderr, "Error Home directory does not exist.\n");
-				userdatalib_path = NULL;
-			}
-		}
 #ifdef MACOSX
-		userdatalib_path = (char *) malloc (strlen (pref_path) + 40);
-		sprintf (userdatalib_path, "%s/Library/Application Support", pref_path);
+		*userdata_path = (char *) malloc (strlen (pref_path) + 40);
+		sprintf (*userdata_path, "%s/Library/Application Support", pref_path);
 #else
-		userdatalib_path = strdup (pref_path);
+		*userdata_path = strdup (pref_path);
 #endif
 #ifdef __MINGW32__
 	} else if (winappdata_path[0] != 0) {
-		userdatalib_path = strdup (winappdata_path);
+		*userdata_path = strdup (winappdata_path);
 #endif
 	} else {
-		userdatalib_path = strdup (".");
+		*userdata_path = strdup (".");
 	}
 	
 	/* Liberar las cadenas temporales */

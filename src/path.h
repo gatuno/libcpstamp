@@ -23,14 +23,9 @@
 
 #define CPSTAMP_BUNDLE "org.cp.stamp"
 
-extern char *systemdatalib_path;
-extern char *l10nlib_path;
-extern char *userdatalib_path;
+void cpstamp_init_paths (const char *argv_0, char **systemdata_path, char **l10n_path, char **userdata_path);
 
-void initSystemLibPaths (const char *argv_0);
-int folder_create (const char *fname);
-int folder_exists (const char *fname);
-int file_exists (const char *fname);
+int cpstamp_split_path (const char *path, char * dir_part, char * filename_part);
 
 #endif /* __PATH_H__ */
 

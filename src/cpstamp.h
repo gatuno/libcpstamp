@@ -21,6 +21,8 @@
 #ifndef __CP_STAMP_H__
 #define __CP_STAMP_H__
 
+#include <SDL.h>
+
 #ifndef FALSE
 #define FALSE 0
 #endif
@@ -46,24 +48,26 @@ enum {
 	STAMP_EXTREME
 };
 
-typedef struct CPStampCategory CPStampCategory;
+typedef struct _CPStampCategory CPStampCategory;
+typedef struct _CPStampHandle CPStampHandle;
 
-extern SDL_Rect cpstamp_rect;
-extern int cpstamp_activate;
+CPStampHandle *CPStamp_Init (int argc, char **argv);
 
-int CPStamp_Init (int argc, char **argv);
-
-CPStampCategory *CPStamp_Open (int tipo, char *nombre, char *clave);
+CPStampCategory *CPStamp_Open (CPStampHandle *handle, int tipo, char *nombre, char *clave);
 void CPStamp_Close (CPStampCategory *cat);
 
 void CPStamp_Register (CPStampCategory *cat, int id, char *titulo, char *descripcion, char *imagen, int categoria, int dificultad);
 int CPStamp_IsRegistered (CPStampCategory *cat, int id);
-void CPStamp_Earn (CPStampCategory *cat, int id);
+void CPStamp_Earn (CPStampHandle *handle, CPStampCategory *cat, int id);
 
-void CPStamp_Restore (SDL_Surface *screen);
-void CPStamp_Draw (SDL_Surface *screen, CPStampCategory *cat, int save);
+void CPStamp_Restore (CPStampHandle *handle, SDL_Surface *screen);
+void CPStamp_Draw (CPStampHandle *handle, SDL_Surface *screen, int save);
 
 void CPStamp_ClearStamps (CPStampCategory *cat);
+
+SDL_Rect CPStamp_GetUpdateRect (CPStampHandle *handle);
+int CPStamp_IsActive (CPStampHandle *handle);
+void CPStamp_WithSound (CPStampHandle *handle, int sound);
 
 #endif /* __CP_STAMP_H__ */
 
