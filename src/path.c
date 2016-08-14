@@ -210,7 +210,7 @@ void cpstamp_init_paths (const char *argv_0, char **systemdata_path, char **l10n
 	}
 #elif MACOSX
 	*l10n_path = (char *) malloc (sizeof (char) * (strlen (progdir) + 30));
-	sprintf (l10nlib_path, "%s/Resources/locale", progdir);
+	sprintf (*l10n_path, "%s/Resources/locale", progdir);
 #else
 	/* Para Linux */
 	*l10n_path = strdup (LOCALEDIR);
