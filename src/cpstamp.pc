@@ -5,6 +5,6 @@ includedir=${prefix}/include
 
 Name: CP Stamp library
 Description: Client Library for drawing Club Penguin Stamps on minigames.
-Version: 0.9.5
+Version: 0.9.6
 Libs: -L${libdir} -lcpstamp
 Cflags: -I${includedir}/libcpstamp

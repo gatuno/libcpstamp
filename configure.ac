@@ -1,4 +1,4 @@
-AC_INIT([Club Penguin Stamp Library], [0.9.5], [], [libcpstamp])
+AC_INIT([Club Penguin Stamp Library], [0.9.6], [], [libcpstamp])
 
 AC_REVISION([Revision 1])
 
@@ -18,7 +18,7 @@ AC_PROG_CC
 AM_INIT_AUTOMAKE([-Wall -Werror])
 
 # Translate this program
-AM_GNU_GETTEXT_VERSION([0.18.1])
+AM_GNU_GETTEXT_VERSION([0.19.3])
 AM_GNU_GETTEXT([external])
 
 AM_PROG_AR

@@ -315,6 +315,7 @@ void CPStamp_Draw (CPStampHandle *handle, SDL_Surface *screen, int save) {
 		handle->update_rect.h = handle->stamp_images[IMG_STAMP_PANEL]->h;
 		handle->update_rect.w = handle->stamp_images[IMG_STAMP_PANEL]->w;
 		handle->update_rect.x = 392;
+		handle->update_rect.y = 0;
 		switch (handle->stamp_timer) {
 			case 8:
 				handle->update_rect.y = 20 - handle->stamp_images[IMG_STAMP_PANEL]->h;
@@ -347,6 +348,8 @@ void CPStamp_Draw (CPStampHandle *handle, SDL_Surface *screen, int save) {
 			case 55:
 				handle->update_rect.y = 29 - handle->stamp_images[IMG_STAMP_PANEL]->h;
 				break;
+			default:
+				handle->update_rect.y = 0;
 		}
 		
 		if (handle->stamp_timer > 13 && handle->stamp_timer < 52) {
@@ -392,6 +395,9 @@ void CPStamp_Draw (CPStampHandle *handle, SDL_Surface *screen, int save) {
 			rect.h = handle->stamp_images[imagen]->h;
 			
 			SDL_BlitSurface (handle->stamp_images[imagen], NULL, screen, &rect);
+		} else {
+			handle->update_rect.x = handle->update_rect.y = 0;
+			handle->update_rect.w = handle->update_rect.h = 0;
 		}
 		
 		handle->stamp_timer++;
