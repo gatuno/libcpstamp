@@ -83,14 +83,22 @@ typedef struct _CPStamp {
 	
 	int ganada;
 	
+	CPStampCategory *category_struct;
+	
 	struct _CPStamp *sig;
 } CPStamp;
 
 struct _CPStampCategory {
 	char *nombre;
-	int tipo;
+	int categoria;
 	
 	CPStamp *lista;
+	int read_version;
+	
+	char *l10n_domain;
+	char *l10n_dir;
+	
+	char *resource_dir;
 	
 	int fd;
 };
@@ -283,6 +291,7 @@ void CPStamp_Draw (CPStampHandle *handle, SDL_Surface *screen, int save) {
 	static SDL_Surface *subtext[2];
 	SDL_Color blanco, negro;
 	CPStamp *stamp;
+	char *l10n_title;
 	
 	if (handle == NULL) return;
 	if (handle->stamp_queue_start == handle->stamp_queue_end) {
@@ -298,8 +307,13 @@ void CPStamp_Draw (CPStampHandle *handle, SDL_Surface *screen, int save) {
 			blanco.r = blanco.g = blanco.b = 255;
 			negro.r = negro.g = negro.b = 0;
 			
-			subtext[0] = TTF_RenderUTF8_Blended (handle->font, stamp->titulo, negro);
-			subtext[1] = TTF_RenderUTF8_Blended (handle->font, stamp->titulo, blanco);
+			if (stamp->category_struct->l10n_domain != NULL) {
+				l10n_title = dgettext (stamp->category_struct->l10n_domain, stamp->titulo);
+			} else {
+				l10n_title = stamp->titulo;
+			}
+			subtext[0] = TTF_RenderUTF8_Blended (handle->font, l10n_title, negro);
+			subtext[1] = TTF_RenderUTF8_Blended (handle->font, l10n_title, blanco);
 		}
 	}
 	
@@ -432,6 +446,7 @@ CPStampCategory *CPStamp_Open (CPStampHandle *handle, int tipo, char *nombre, ch
 	int g, n_stampas, res;
 	CPStampCategory *abierta;
 	CPStamp *s, *last;
+	uint32_t version;
 	
 	if (handle == NULL) return NULL;
 	if (handle->userdata_path == NULL || handle->userdata_path[0] == 0) return NULL;
@@ -458,25 +473,31 @@ CPStampCategory *CPStamp_Open (CPStampHandle *handle, int tipo, char *nombre, ch
 	abierta = (CPStampCategory *) malloc (sizeof (CPStampCategory));
 	
 	if (abierta == NULL) {
+		close (fd);
 		return NULL;
 	}
 	
 	abierta->nombre = nombre;
-	abierta->tipo = tipo;
+	abierta->categoria = tipo;
 	abierta->fd = fd;
 	abierta->lista = NULL;
+	abierta->l10n_domain = NULL;
+	abierta->l10n_dir = NULL;
+	abierta->resource_dir = NULL;
 	
 	/* Leer el número de versión */
-	if (read (fd, &temp, sizeof (uint32_t)) == 0) {
+	if (read (fd, &version, sizeof (uint32_t)) == 0) {
 		/* El archivo no existe, así que se ignora y se crea la estructura */
 		return abierta;
 	}
 	
-	/* Si la versión no es 0, no abrir el archivo */
-	if (temp != 0) {
+	/* Si la versión no es 0 o 1, no abrir el archivo */
+	if (version != 0 && version != 1) {
 		free (abierta);
 		return NULL;
 	}
+	
+	abierta->read_version = version;
 	
 	/* Leer la cantidad de estampas */
 	if (read (fd, &temp, sizeof (uint32_t)) == 0) {
@@ -486,6 +507,89 @@ CPStampCategory *CPStamp_Open (CPStampHandle *handle, int tipo, char *nombre, ch
 	
 	n_stampas = temp;
 	
+	if (version >= 1) {
+		/* Leer la categoria general */
+		res = read (fd, &temp, sizeof (uint32_t));
+		if (res < 0 || temp >= NUM_STAMP_TYPE) {
+			/* Ignorar, poner la categoría por default */
+			return abierta;
+		}
+		
+		abierta->categoria = tipo;
+		
+		/* Leer el nombre de las estampas */
+		res = read (fd, &temp, sizeof (uint32_t));
+		if (res <= 0) {
+			/* Error en la lectura del archivo, ignorar */
+			return abierta;
+		}
+		
+		if (temp < sizeof (buf)) { /* Leer solo si tenemos espacio */
+			res = read (fd, buf, temp * sizeof (char));
+			
+			if (buf[0] != 0) {
+				abierta->nombre = strdup (buf);
+			}
+		} else {
+			/* Brincar el nombre, de igual forma, no debería ser tan largo */
+			lseek (fd, temp, SEEK_CUR);
+		}
+		
+		/* Leer el dominio de traducción */
+		res = read (fd, &temp, sizeof (uint32_t));
+		if (res <= 0) {
+			/* Error en la lectura del archivo, ignorar */
+			return abierta;
+		}
+		
+		if (temp < sizeof (buf)) { /* Leer solo si tenemos espacio */
+			res = read (fd, buf, temp * sizeof (char));
+			
+			if (buf[0] != 0) {
+				abierta->l10n_domain = strdup (buf);
+			}
+		} else {
+			/* Brincar el nombre del dominio, de igual forma, no debería ser tan largo */
+			lseek (fd, temp, SEEK_CUR);
+		}
+		
+		/* Leer el nombre de directorio de l10n */
+		res = read (fd, &temp, sizeof (uint32_t));
+		if (res <= 0) {
+			/* Error en la lectura del archivo, ignorar */
+			return abierta;
+		}
+		
+		if (temp < sizeof (buf)) { /* Leer solo si tenemos espacio */
+			res = read (fd, buf, temp * sizeof (char));
+			
+			if (buf[0] != 0) {
+				abierta->l10n_dir = strdup (buf);
+			}
+		} else {
+			/* Brincar el nombre del l10n_dir, de igual forma, no debería ser tan largo */
+			lseek (fd, temp, SEEK_CUR);
+		}
+		
+		/* Leer el nombre de directorio de recursos de estampas */
+		res = read (fd, &temp, sizeof (uint32_t));
+		if (res <= 0) {
+			/* Error en la lectura del archivo, ignorar */
+			return abierta;
+		}
+		
+		if (temp < sizeof (buf)) { /* Leer solo si tenemos espacio */
+			res = read (fd, buf, temp * sizeof (char));
+			
+			if (buf[0] != 0) {
+				abierta->resource_dir = strdup (buf);
+			}
+		} else {
+			/* Brincar el nombre del directorio de recursos, de igual forma, no debería ser tan largo */
+			lseek (fd, temp, SEEK_CUR);
+		}
+	}
+	
 	for (g = 0; g < n_stampas; g++) {
 		s = (CPStamp *) malloc (sizeof (CPStamp));
 		
@@ -493,6 +597,8 @@ CPStampCategory *CPStamp_Open (CPStampHandle *handle, int tipo, char *nombre, ch
 			return abierta;
 		}
 		s->sig = NULL;
+		s->category_struct = abierta;
+		s->descripcion = NULL;
 		
 		/* Leer el id de la estampa */
 		res = read (fd, &temp, sizeof (uint32_t));
@@ -525,11 +631,43 @@ CPStampCategory *CPStamp_Open (CPStampHandle *handle, int tipo, char *nombre, ch
 		
 		s->titulo = strdup (buf);
 		
+		if (version >= 1) {
+			temp = 0;
+			res = read (fd, &temp, sizeof (uint32_t));
+			
+			if (res <= 0) {
+				/* Error en la lectura, ignorar la estampa y salir */
+				free (s->titulo);
+				free (s);
+				return abierta;
+			}
+			
+			if (temp < sizeof (buf)) {
+				res = read (fd, buf, temp * sizeof (char));
+				
+				if (res < temp) {
+					/* Hemos leido menos bytes que los esperados */
+					free (s->titulo);
+					free (s);
+					return abierta;
+				}
+				
+				buf[temp] = 0;
+				
+				s->descripcion = strdup (buf);
+			} else {
+				/* No tengo espacio para leer la descripción, es muy larga */
+				lseek (fd, temp, SEEK_CUR);
+				s->descripcion = strdup ("");
+			}
+		}
+		
 		res = read (fd, &temp, sizeof (uint32_t));
 		if (res < 0 || temp >= NUM_STAMP_TYPE) {
 			/* Error de lectura 
 			 * o dato inválido */
 			free (s->titulo);
+			free (s->descripcion);
 			free (s);
 			return abierta;
 		}
@@ -541,6 +679,7 @@ CPStampCategory *CPStamp_Open (CPStampHandle *handle, int tipo, char *nombre, ch
 			/* Error de lectura 
 			 * o dato inválido */
 			free (s->titulo);
+			free (s->descripcion);
 			free (s);
 			return abierta;
 		}
@@ -551,6 +690,7 @@ CPStampCategory *CPStamp_Open (CPStampHandle *handle, int tipo, char *nombre, ch
 		if (res < 0) {
 			/* Error de lectura */
 			free (s->titulo);
+			free (s->descripcion);
 			free (s);
 			return abierta;
 		}
@@ -569,24 +709,79 @@ CPStampCategory *CPStamp_Open (CPStampHandle *handle, int tipo, char *nombre, ch
 	return abierta;
 }
 
+void CPStamp_SetLocale (CPStampCategory *cat, char *domain, char *localedir) {
+	if (cat->l10n_domain != NULL) {
+		free (cat->l10n_domain);
+		cat->l10n_domain = NULL;
+	}
+	
+	if (domain != NULL && domain[0] != 0) {
+		cat->l10n_domain = strdup (domain);
+	}
+	
+	if (cat->l10n_dir != NULL) {
+		free (cat->l10n_dir);
+		cat->l10n_dir = NULL;
+	}
+	
+	if (localedir != NULL && localedir[0] != 0) {
+		cat->l10n_dir = strdup (localedir);
+	}
+	
+	/* TODO: ¿Deberíamos usar bindtextdomain? */
+}
+
+void CPStamp_SetResourceDir (CPStampCategory *cat, char *resource_dir) {
+	if (cat->resource_dir != NULL) {
+		free (cat->resource_dir);
+		cat->resource_dir = NULL;
+	}
+	
+	if (resource_dir != NULL && resource_dir[0] != 0) {
+		cat->resource_dir = strdup (resource_dir);
+	}
+}
+
 void CPStamp_Register (CPStampCategory *cat, int id, char *titulo, char *descripcion, char *imagen, int categoria, int dificultad) {
 	CPStamp *s, **t;
 	if (cat == NULL) return;
+	s = NULL;
+	if (cat->read_version == 0) {
+		/* Si la versión leida es 0, buscar y actualizar la estampa, porque aún no tiene descripción */
+		s = cat->lista;
+		
+		while (s != NULL) {
+			if (s->id == id) {
+				/* Encontrada */
+				free (s->titulo);
+				free (s->descripcion);
+				break;
+			}
+			
+			s = s->sig;
+		}
+	}
 	
-	s = (CPStamp *) malloc (sizeof (CPStamp));
-	if (s == NULL) return;
-	s->sig = NULL;
+	if (s == NULL) {
+		s = (CPStamp *) malloc (sizeof (CPStamp));
+		if (s == NULL) return;
+		s->sig = NULL;
 	
-	t = &(cat->lista);
-	while (*t != NULL) t = &((*t)->sig);
+		t = &(cat->lista);
+		while (*t != NULL) t = &((*t)->sig);
 	
-	*t = s;
+		*t = s;
+		
+		s->ganada = FALSE;
+	}
 	
 	s->id = id;
 	s->titulo = strdup (titulo);
+	s->descripcion = strdup (descripcion);
 	s->categoria = categoria;
 	s->dificultad = dificultad;
-	s->ganada = FALSE;
+	
+	s->category_struct = cat;
 }
 
 int CPStamp_IsRegistered (CPStampCategory *cat, int id) {
@@ -597,6 +792,10 @@ int CPStamp_IsRegistered (CPStampCategory *cat, int id) {
 	
 	while (local != NULL) {
 		if (local->id == id) {
+			if (cat->read_version == 0) {
+				/* Mentiré diciendo que "No está registrada" para re-leer la descripción */
+				return FALSE;
+			}
 			return TRUE;
 		}
 		
@@ -610,11 +809,13 @@ void CPStamp_Close (CPStampCategory *cat) {
 	uint32_t temp;
 	int g;
 	CPStamp *s, *last;
+	char buf;
 	
 	if (cat == NULL) return;
 	
 	/* Rebobinar la posición del archivo */
 	lseek (cat->fd, 0, SEEK_SET);
+	ftruncate (cat->fd, 0);
 	
 	/* Contar las estampas */
 	s = cat->lista;
@@ -625,23 +826,92 @@ void CPStamp_Close (CPStampCategory *cat) {
 		s = s->sig;
 	}
 	
-	temp = 0; /* Versión del archivo */
+	temp = 1; /* Versión del archivo */
 	write (cat->fd, &temp, sizeof (uint32_t));
 	
 	temp = g; /* Número de estampas */
 	write (cat->fd, &temp, sizeof (uint32_t));
+	
+	/* Categoria general */
+	temp = cat->categoria;
+	write (cat->fd, &temp, sizeof (uint32_t));
+	
+	/* Nombre */
+	if (cat->nombre != NULL) {
+		temp = strlen (cat->nombre) + 1;
+		write (cat->fd, &temp, sizeof (uint32_t));
+		
+		write (cat->fd, cat->nombre, temp * sizeof (char));
+	} else {
+		temp = 0;
+		
+		write (cat->fd, &temp, sizeof (uint32_t));
+		buf = 0;
+		write (cat->fd, &buf, 1);
+	}
+	
+	/* Dominio de traducción */
+	if (cat->l10n_domain != NULL) {
+		temp = strlen (cat->l10n_domain) + 1;
+		write (cat->fd, &temp, sizeof (uint32_t));
+		
+		write (cat->fd, cat->l10n_domain, temp * sizeof (char));
+	} else {
+		temp = 0;
+		
+		write (cat->fd, &temp, sizeof (uint32_t));
+		buf = 0;
+		write (cat->fd, &buf, 1);
+	}
+	
+	/* Directorio de locale */
+	if (cat->l10n_dir != NULL) {
+		temp = strlen (cat->l10n_dir) + 1;
+		write (cat->fd, &temp, sizeof (uint32_t));
+		
+		write (cat->fd, cat->l10n_dir, temp * sizeof (char));
+	} else {
+		temp = 0;
+		
+		write (cat->fd, &temp, sizeof (uint32_t));
+		buf = 0;
+		write (cat->fd, &buf, 1);
+	}
+	
+	/* Directorio de recursos */
+	if (cat->resource_dir != NULL) {
+		temp = strlen (cat->resource_dir) + 1;
+		write (cat->fd, &temp, sizeof (uint32_t));
+		
+		write (cat->fd, cat->resource_dir, temp * sizeof (char));
+	} else {
+		temp = 0;
+		
+		write (cat->fd, &temp, sizeof (uint32_t));
+		buf = 0;
+		write (cat->fd, &buf, 1);
+	}
 	
 	s = cat->lista;
 	while (s != NULL) {
 		temp = s->id;
 		write (cat->fd, &temp, sizeof (uint32_t));
 		
+		/* Escribir el título */
 		temp = strlen (s->titulo) + 1;
 		write (cat->fd, &temp, sizeof (uint32_t));
 		
 		write (cat->fd, s->titulo, temp * sizeof (char));
 		
 		free (s->titulo);
+		
+		/* Escribir la descripción */
+		temp = strlen (s->descripcion) + 1;
+		write (cat->fd, &temp, sizeof (uint32_t));
+		
+		write (cat->fd, s->descripcion, temp * sizeof (char));
+		
+		free (s->descripcion);
 		
 		temp = s->categoria;
 		write (cat->fd, &temp, sizeof (uint32_t));

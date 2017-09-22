@@ -54,6 +54,8 @@ typedef struct _CPStampHandle CPStampHandle;
 CPStampHandle *CPStamp_Init (int argc, char **argv);
 
 CPStampCategory *CPStamp_Open (CPStampHandle *handle, int tipo, char *nombre, char *clave);
+void CPStamp_SetLocale (CPStampCategory *cat, char *domain, char *localedir);
+void CPStamp_SetResourceDir (CPStampCategory *cat, char *resource_dir);
 void CPStamp_Close (CPStampCategory *cat);
 
 void CPStamp_Register (CPStampCategory *cat, int id, char *titulo, char *descripcion, char *imagen, int categoria, int dificultad);

@@ -12,3 +12,31 @@ Cada estampa contiene:
 	[uint32_t] Categoria
 	[uint32_t] Dificultad
 	[uint32_t] Booleano, ganada o no
+
+-----------------------------------------
+
+Versión 1, se agregan elementos de i18n, elementos del libro de estampas faltantes:
+
+[uint32_t] 4 bytes con el número de versión del archivo
+[uint32_t] 4 bytes con la cantidad de estampas en el archivo
+[uint32_t] Categoria del juego
+[uint32_t] Cantidad de bytes del nombre
+	[string] Nombre de la categoría
+[uint32_t] Cantidad de bytes del dominio de traducción
+	[string] Dominio de traducción. Define que dominio se debe usar para traducir los nombres de las estampas, terminado por el caracter \0
+[uint32_t] Cantidad de bytes del directorio
+	[string] Locale dir. Directorio donde se encuentra los catalogos de traducción para esta categoria de estampas. Terminado por el caracter \0
+[uint32_t] Cantidad de bytes de la ruta de los recursos del libro de estampas
+	[string] La ruta de los recursos del libro de estampas
+	
+Cada estampa contiene:
+	[uint32_t] ID de la estampa
+	[uint32_t] Cantidad de bytes del título
+		[string] Cadena del titulo, terminada por el caracter \0
+	[uint32_t] Cantidad de bytes de la descripción
+		[string] Descripción de la estampa, terminada por el caracter \0
+	[uint32_t] Categoria
+	[uint32_t] Dificultad
+	[uint32_t] Booleano, ganada o no
+
+

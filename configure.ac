@@ -1,4 +1,4 @@
-AC_INIT([Club Penguin Stamp Library], [0.9.6], [], [libcpstamp])
+AC_INIT([Club Penguin Stamp Library], [0.9.7], [], [libcpstamp])
 
 AC_REVISION([Revision 1])
 
