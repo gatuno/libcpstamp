@@ -206,6 +206,7 @@ CPStampHandle *CPStamp_Init (int argc, char **argv) {
 	
 	/* Inicializar nuestro dominio de i18n */
 	bindtextdomain (PACKAGE, l10n_path);
+	bind_textdomain_codeset (PACKAGE, "UTF-8");
 	
 	free (l10n_path);
 	
