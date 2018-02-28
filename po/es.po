@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libcpstamp 0.9.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-07 19:47-0500\n"
+"POT-Creation-Date: 2017-09-22 12:40-0500\n"
 "PO-Revision-Date: 2016-01-13 15:52-0600\n"
 "Last-Translator: Félix Arreola Rodrguez <fgatuno.123@gmail.com>\n"
 "Language-Team: Spanish\n"
@@ -17,10 +17,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/cpstamp.c:244 src/cpstamp.c:245
+#: src/cpstamp.c:252 src/cpstamp.c:253
 msgid "Stamp Earned!"
 msgstr "¡Ganaste 1 estampilla!"
 
-#: src/cpstamp.c:455
+#: src/cpstamp.c:470
 msgid "Failed to open Stamps File"
 msgstr "Falló al abrir el archivo de estampas"

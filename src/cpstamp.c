@@ -524,7 +524,7 @@ CPStampCategory *CPStamp_Open (CPStampHandle *handle, int tipo, char *nombre, ch
 			return abierta;
 		}
 		
-		if (temp < sizeof (buf)) { /* Leer solo si tenemos espacio */
+		if (temp < sizeof (buf) && temp > 0) { /* Leer solo si tenemos espacio */
 			res = read (fd, buf, temp * sizeof (char));
 			
 			if (buf[0] != 0) {
@@ -542,7 +542,7 @@ CPStampCategory *CPStamp_Open (CPStampHandle *handle, int tipo, char *nombre, ch
 			return abierta;
 		}
 		
-		if (temp < sizeof (buf)) { /* Leer solo si tenemos espacio */
+		if (temp < sizeof (buf) && temp > 0) { /* Leer solo si tenemos espacio */
 			res = read (fd, buf, temp * sizeof (char));
 			
 			if (buf[0] != 0) {
@@ -560,7 +560,7 @@ CPStampCategory *CPStamp_Open (CPStampHandle *handle, int tipo, char *nombre, ch
 			return abierta;
 		}
 		
-		if (temp < sizeof (buf)) { /* Leer solo si tenemos espacio */
+		if (temp < sizeof (buf) && temp > 0) { /* Leer solo si tenemos espacio */
 			res = read (fd, buf, temp * sizeof (char));
 			
 			if (buf[0] != 0) {
@@ -578,7 +578,7 @@ CPStampCategory *CPStamp_Open (CPStampHandle *handle, int tipo, char *nombre, ch
 			return abierta;
 		}
 		
-		if (temp < sizeof (buf)) { /* Leer solo si tenemos espacio */
+		if (temp < sizeof (buf) && temp > 0) { /* Leer solo si tenemos espacio */
 			res = read (fd, buf, temp * sizeof (char));
 			
 			if (buf[0] != 0) {
@@ -612,7 +612,7 @@ CPStampCategory *CPStamp_Open (CPStampHandle *handle, int tipo, char *nombre, ch
 		
 		temp = 0;
 		res = read (fd, &temp, sizeof (uint32_t));
-		if (res <= 0 || temp > 255) {
+		if (res <= 0 || temp > 255 || temp == 0) {
 			/* Error en la lectura del archivo, ignorar la estampa y salir 
 			 * o Cadena de texto demasiado larga */
 			free (s);
@@ -642,7 +642,7 @@ CPStampCategory *CPStamp_Open (CPStampHandle *handle, int tipo, char *nombre, ch
 				return abierta;
 			}
 			
-			if (temp < sizeof (buf)) {
+			if (temp < sizeof (buf) && temp > 0) {
 				res = read (fd, buf, temp * sizeof (char));
 				
 				if (res < temp) {

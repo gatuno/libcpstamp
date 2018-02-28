@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: libcpstamp 0.9.6\n"
+"Project-Id-Version: libcpstamp 0.9.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-07 19:47-0500\n"
+"POT-Creation-Date: 2017-09-22 12:40-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,10 +17,10 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/cpstamp.c:244 src/cpstamp.c:245
+#: src/cpstamp.c:252 src/cpstamp.c:253
 msgid "Stamp Earned!"
 msgstr ""
 
-#: src/cpstamp.c:455
+#: src/cpstamp.c:470
 msgid "Failed to open Stamps File"
 msgstr ""
