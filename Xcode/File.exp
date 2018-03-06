@@ -1,0 +1,20 @@
+#  File.exp
+#  CPStamp
+#
+#  Created by Gatuno on 13/01/16.
+#
+
+_CPStamp_Init
+_CPStamp_Open
+_CPStamp_Close
+_CPStamp_Register
+_CPStamp_IsRegistered
+_CPStamp_Earn
+_CPStamp_Restore
+_CPStamp_Draw
+_CPStamp_ClearStamps
+_CPStamp_GetUpdateRect
+_CPStamp_IsActive
+_CPStamp_WithSound
+_CPStamp_SetLocale
+_CPStamp_SetResourceDir

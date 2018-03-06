@@ -572,6 +572,11 @@ CPStampCategory *CPStamp_Open (CPStampHandle *handle, int tipo, char *nombre, ch
 			lseek (fd, temp, SEEK_CUR);
 		}
 		
+		/* Activar el directorio de la locale */
+		if (abierta->l10n_domain != NULL && abierta->l10n_dir != NULL) {
+			bindtextdomain (abierta->l10n_domain, abierta->l10n_dir);
+		}
+		
 		/* Leer el nombre de directorio de recursos de estampas */
 		res = read (fd, &temp, sizeof (uint32_t));
 		if (res <= 0) {
@@ -729,7 +734,9 @@ void CPStamp_SetLocale (CPStampCategory *cat, char *domain, char *localedir) {
 		cat->l10n_dir = strdup (localedir);
 	}
 	
-	/* TODO: ¿Deberíamos usar bindtextdomain? */
+	if (cat->l10n_domain != NULL && cat->l10n_dir != NULL) {
+		bindtextdomain (cat->l10n_domain, cat->l10n_dir);
+	}
 }
 
 void CPStamp_SetResourceDir (CPStampCategory *cat, char *resource_dir) {

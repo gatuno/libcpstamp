@@ -1,0 +1,695 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8C47B39E1C3CD7C900065548 /* cpstamp.c in Sources */ = {isa = PBXBuildFile; fileRef = 8C47B39C1C3CD7C900065548 /* cpstamp.c */; settings = {COMPILER_FLAGS = "-fvisibility=default"; }; };
+		8C47B39F1C3CD7C900065548 /* cpstamp.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C47B39D1C3CD7C900065548 /* cpstamp.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8C47B3A41C3CD8A800065548 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C47B3A31C3CD8A800065548 /* ApplicationServices.framework */; };
+		8C47B3A61C3CD8AF00065548 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C47B3A51C3CD8AF00065548 /* Foundation.framework */; };
+		8C47B3A81C3CD8E600065548 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C47B3A71C3CD8E600065548 /* SDL.framework */; };
+		8C47B3AA1C3CD8F600065548 /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C47B3A91C3CD8F600065548 /* SDL_image.framework */; };
+		8C47B3AC1C3CD90C00065548 /* SDL_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C47B3AB1C3CD90C00065548 /* SDL_mixer.framework */; };
+		8C47B3AE1C3CD93900065548 /* SDL_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C47B3AD1C3CD93900065548 /* SDL_ttf.framework */; };
+		8C47B3B61C3CDCFD00065548 /* CPStamp.info in Resources */ = {isa = PBXBuildFile; fileRef = 8C47B3B51C3CDCFD00065548 /* CPStamp.info */; };
+		8C7846831C4049C60028CF06 /* burbanksb.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C78466C1C40496A0028CF06 /* burbanksb.ttf */; };
+		8C78468B1C404A560028CF06 /* game_easy.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C78466E1C40496A0028CF06 /* game_easy.png */; };
+		8C78468C1C404A560028CF06 /* game_extreme.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C78466F1C40496A0028CF06 /* game_extreme.png */; };
+		8C78468D1C404A560028CF06 /* game_hard.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C7846701C40496A0028CF06 /* game_hard.png */; };
+		8C78468E1C404A560028CF06 /* game_normal.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C7846711C40496A0028CF06 /* game_normal.png */; };
+		8C78468F1C404A560028CF06 /* panel_stamp.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C7846721C40496A0028CF06 /* panel_stamp.png */; };
+		8C7846911C404AA40028CF06 /* earn.wav in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C7846771C40496A0028CF06 /* earn.wav */; };
+		8CCA1364204E4E3A0014F0F2 /* libintl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CCA1363204E4E3A0014F0F2 /* libintl.framework */; };
+		8CCA1366204E549D0014F0F2 /* libintl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8CCA1363204E4E3A0014F0F2 /* libintl.framework */; };
+		8CFFDFA01C40446B00E377A2 /* gettext.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CFFDF9D1C40446B00E377A2 /* gettext.h */; };
+		8CFFDFA11C40446B00E377A2 /* path.c in Sources */ = {isa = PBXBuildFile; fileRef = 8CFFDF9E1C40446B00E377A2 /* path.c */; };
+		8CFFDFA21C40446B00E377A2 /* path.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CFFDF9F1C40446B00E377A2 /* path.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8C78469F1C404DCF0028CF06 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8C47B37B1C3CCFBF00065548 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8C47B3851C3CD04400065548;
+			remoteInfo = Framework;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8C7846821C4049A00028CF06 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = data;
+			dstSubfolderSpec = 7;
+			files = (
+				8C7846831C4049C60028CF06 /* burbanksb.ttf in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8C78468A1C404A450028CF06 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = data/images;
+			dstSubfolderSpec = 7;
+			files = (
+				8C78468B1C404A560028CF06 /* game_easy.png in CopyFiles */,
+				8C78468C1C404A560028CF06 /* game_extreme.png in CopyFiles */,
+				8C78468D1C404A560028CF06 /* game_hard.png in CopyFiles */,
+				8C78468E1C404A560028CF06 /* game_normal.png in CopyFiles */,
+				8C78468F1C404A560028CF06 /* panel_stamp.png in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8C7846901C404A820028CF06 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = data/sounds;
+			dstSubfolderSpec = 7;
+			files = (
+				8C7846911C404AA40028CF06 /* earn.wav in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8CCA1365204E548E0014F0F2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				8CCA1366204E549D0014F0F2 /* libintl.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		8C47B3861C3CD04400065548 /* CPStamp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CPStamp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8C47B39C1C3CD7C900065548 /* cpstamp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cpstamp.c; path = ../src/cpstamp.c; sourceTree = "<group>"; };
+		8C47B39D1C3CD7C900065548 /* cpstamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cpstamp.h; path = ../src/cpstamp.h; sourceTree = "<group>"; };
+		8C47B3A31C3CD8A800065548 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/ApplicationServices.framework; sourceTree = DEVELOPER_DIR; };
+		8C47B3A51C3CD8AF00065548 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		8C47B3A71C3CD8E600065548 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
+		8C47B3A91C3CD8F600065548 /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_image.framework; path = /Library/Frameworks/SDL_image.framework; sourceTree = "<absolute>"; };
+		8C47B3AB1C3CD90C00065548 /* SDL_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_mixer.framework; path = /Library/Frameworks/SDL_mixer.framework; sourceTree = "<absolute>"; };
+		8C47B3AD1C3CD93900065548 /* SDL_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_ttf.framework; path = /Library/Frameworks/SDL_ttf.framework; sourceTree = "<absolute>"; };
+		8C47B3B21C3CDB0F00065548 /* Info-Framework.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-Framework.plist"; sourceTree = "<group>"; };
+		8C47B3B51C3CDCFD00065548 /* CPStamp.info */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CPStamp.info; sourceTree = "<group>"; };
+		8C78466C1C40496A0028CF06 /* burbanksb.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = burbanksb.ttf; sourceTree = "<group>"; };
+		8C78466E1C40496A0028CF06 /* game_easy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = game_easy.png; sourceTree = "<group>"; };
+		8C78466F1C40496A0028CF06 /* game_extreme.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = game_extreme.png; sourceTree = "<group>"; };
+		8C7846701C40496A0028CF06 /* game_hard.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = game_hard.png; sourceTree = "<group>"; };
+		8C7846711C40496A0028CF06 /* game_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = game_normal.png; sourceTree = "<group>"; };
+		8C7846721C40496A0028CF06 /* panel_stamp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = panel_stamp.png; sourceTree = "<group>"; };
+		8C7846771C40496A0028CF06 /* earn.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = earn.wav; sourceTree = "<group>"; };
+		8C7846961C404CBA0028CF06 /* Create DMG */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Create DMG"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8C78469A1C404CBA0028CF06 /* Create_DMG.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Create_DMG.1; sourceTree = "<group>"; };
+		8CC9B0AD1C4631D10088C6BD /* File.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = File.exp; sourceTree = "<group>"; };
+		8CCA1363204E4E3A0014F0F2 /* libintl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libintl.framework; path = /Library/Frameworks/libintl.framework; sourceTree = "<absolute>"; };
+		8CFFDF9D1C40446B00E377A2 /* gettext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gettext.h; path = ../src/gettext.h; sourceTree = "<group>"; };
+		8CFFDF9E1C40446B00E377A2 /* path.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = path.c; path = ../src/path.c; sourceTree = "<group>"; };
+		8CFFDF9F1C40446B00E377A2 /* path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = path.h; path = ../src/path.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8C47B3821C3CD04400065548 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8C47B3A81C3CD8E600065548 /* SDL.framework in Frameworks */,
+				8C47B3AA1C3CD8F600065548 /* SDL_image.framework in Frameworks */,
+				8C47B3AC1C3CD90C00065548 /* SDL_mixer.framework in Frameworks */,
+				8C47B3AE1C3CD93900065548 /* SDL_ttf.framework in Frameworks */,
+				8CCA1364204E4E3A0014F0F2 /* libintl.framework in Frameworks */,
+				8C47B3A41C3CD8A800065548 /* ApplicationServices.framework in Frameworks */,
+				8C47B3A61C3CD8AF00065548 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8C47B37A1C3CCFBF00065548 = {
+			isa = PBXGroup;
+			children = (
+				8CC9B0AD1C4631D10088C6BD /* File.exp */,
+				8C78466B1C40496A0028CF06 /* data */,
+				8C47B3B41C3CDCFD00065548 /* pkg-support */,
+				8C47B3A01C3CD7D000065548 /* Public Headers */,
+				8C47B3A11C3CD7DC00065548 /* Library Source */,
+				8C7846971C404CBA0028CF06 /* Create DMG */,
+				8C47B3881C3CD04400065548 /* Frameworks */,
+				8C47B3871C3CD04400065548 /* Products */,
+				8C47B3B21C3CDB0F00065548 /* Info-Framework.plist */,
+			);
+			sourceTree = "<group>";
+		};
+		8C47B3871C3CD04400065548 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8C47B3861C3CD04400065548 /* CPStamp.framework */,
+				8C7846961C404CBA0028CF06 /* Create DMG */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8C47B3881C3CD04400065548 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8C47B3A21C3CD82F00065548 /* Linked Frameworks */,
+				8C47B3A51C3CD8AF00065548 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8C47B3A01C3CD7D000065548 /* Public Headers */ = {
+			isa = PBXGroup;
+			children = (
+				8C47B39D1C3CD7C900065548 /* cpstamp.h */,
+			);
+			name = "Public Headers";
+			sourceTree = "<group>";
+		};
+		8C47B3A11C3CD7DC00065548 /* Library Source */ = {
+			isa = PBXGroup;
+			children = (
+				8CFFDF9D1C40446B00E377A2 /* gettext.h */,
+				8CFFDF9E1C40446B00E377A2 /* path.c */,
+				8CFFDF9F1C40446B00E377A2 /* path.h */,
+				8C47B39C1C3CD7C900065548 /* cpstamp.c */,
+			);
+			name = "Library Source";
+			sourceTree = "<group>";
+		};
+		8C47B3A21C3CD82F00065548 /* Linked Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8CCA1363204E4E3A0014F0F2 /* libintl.framework */,
+				8C47B3A31C3CD8A800065548 /* ApplicationServices.framework */,
+				8C47B3A71C3CD8E600065548 /* SDL.framework */,
+				8C47B3A91C3CD8F600065548 /* SDL_image.framework */,
+				8C47B3AB1C3CD90C00065548 /* SDL_mixer.framework */,
+				8C47B3AD1C3CD93900065548 /* SDL_ttf.framework */,
+			);
+			name = "Linked Frameworks";
+			sourceTree = "<group>";
+		};
+		8C47B3B41C3CDCFD00065548 /* pkg-support */ = {
+			isa = PBXGroup;
+			children = (
+				8C47B3B51C3CDCFD00065548 /* CPStamp.info */,
+			);
+			path = "pkg-support";
+			sourceTree = "<group>";
+		};
+		8C78466B1C40496A0028CF06 /* data */ = {
+			isa = PBXGroup;
+			children = (
+				8C78466C1C40496A0028CF06 /* burbanksb.ttf */,
+				8C78466D1C40496A0028CF06 /* images */,
+				8C7846761C40496A0028CF06 /* sounds */,
+			);
+			name = data;
+			path = ../data;
+			sourceTree = "<group>";
+		};
+		8C78466D1C40496A0028CF06 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				8C78466E1C40496A0028CF06 /* game_easy.png */,
+				8C78466F1C40496A0028CF06 /* game_extreme.png */,
+				8C7846701C40496A0028CF06 /* game_hard.png */,
+				8C7846711C40496A0028CF06 /* game_normal.png */,
+				8C7846721C40496A0028CF06 /* panel_stamp.png */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		8C7846761C40496A0028CF06 /* sounds */ = {
+			isa = PBXGroup;
+			children = (
+				8C7846771C40496A0028CF06 /* earn.wav */,
+			);
+			path = sounds;
+			sourceTree = "<group>";
+		};
+		8C7846971C404CBA0028CF06 /* Create DMG */ = {
+			isa = PBXGroup;
+			children = (
+				8C78469A1C404CBA0028CF06 /* Create_DMG.1 */,
+			);
+			path = "Create DMG";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		8C47B3831C3CD04400065548 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8C47B39F1C3CD7C900065548 /* cpstamp.h in Headers */,
+				8CFFDFA01C40446B00E377A2 /* gettext.h in Headers */,
+				8CFFDFA21C40446B00E377A2 /* path.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		8C47B3851C3CD04400065548 /* Framework */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8C47B3991C3CD04400065548 /* Build configuration list for PBXNativeTarget "Framework" */;
+			buildPhases = (
+				8C47B3831C3CD04400065548 /* Headers */,
+				8C47B3841C3CD04400065548 /* Resources */,
+				8C47B3811C3CD04400065548 /* Sources */,
+				8C47B3821C3CD04400065548 /* Frameworks */,
+				8C7846821C4049A00028CF06 /* CopyFiles */,
+				8C78468A1C404A450028CF06 /* CopyFiles */,
+				8C7846901C404A820028CF06 /* CopyFiles */,
+				8C47B3B01C3CD9CC00065548 /* Convert SDL includes to SDL Framework includes */,
+				8CCA135F204E47590014F0F2 /* ShellScript */,
+				8CCA1365204E548E0014F0F2 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Framework;
+			productName = Framework;
+			productReference = 8C47B3861C3CD04400065548 /* CPStamp.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		8C7846951C404CBA0028CF06 /* Create DMG */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8C78469C1C404CBA0028CF06 /* Build configuration list for PBXNativeTarget "Create DMG" */;
+			buildPhases = (
+				8C7846A11C404E410028CF06 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8C7846A01C404DCF0028CF06 /* PBXTargetDependency */,
+			);
+			name = "Create DMG";
+			productName = "Create DMG";
+			productReference = 8C7846961C404CBA0028CF06 /* Create DMG */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8C47B37B1C3CCFBF00065548 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+			};
+			buildConfigurationList = 8C47B37E1C3CCFBF00065548 /* Build configuration list for PBXProject "CPStamp" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 8C47B37A1C3CCFBF00065548;
+			productRefGroup = 8C47B3871C3CD04400065548 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8C47B3851C3CD04400065548 /* Framework */,
+				8C7846951C404CBA0028CF06 /* Create DMG */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8C47B3841C3CD04400065548 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8C47B3B61C3CDCFD00065548 /* CPStamp.info in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8C47B3B01C3CD9CC00065548 /* Convert SDL includes to SDL Framework includes */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Convert SDL includes to SDL Framework includes";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd $SYMROOT/$CONFIGURATION/CPStamp.framework/Versions/Current/Headers\nsed 's,#include \"\\(.*\\)\",#include <SDL/\\1>,' <cpstamp.h >cpstamp.h.new\nmv cpstamp.h.new cpstamp.h";
+		};
+		8C7846A11C404E410028CF06 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# clean up the framework, remove headers, extra files\nmkdir -p build/dmg-tmp\nCpMac -r $TARGET_BUILD_DIR/CPStamp.framework build/dmg-tmp/\n#cp pkg-support/resources/ReadMe.txt build/dmg-tmp\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname CPStamp -srcfolder build/dmg-tmp build/CPStamp.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n\n# compress it???\n#(cd build; gnutar -zcvf SDL_image.dmg.tar.gz SDL_image.dmg)";
+		};
+		8CCA135F204E47590014F0F2 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/opt/gettext/bin/msgfmt -c --statistics --verbose -o es.gmo ./../po/es.po\n\nmkdir -p $SYMROOT/$CONFIGURATION/CPStamp.framework/Resources/locale/es/LC_MESSAGES\n\nCpMac es.gmo $SYMROOT/$CONFIGURATION/CPStamp.framework/Resources/locale/es/LC_MESSAGES/libcpstamp.mo";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8C47B3811C3CD04400065548 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8C47B39E1C3CD7C900065548 /* cpstamp.c in Sources */,
+				8CFFDFA11C40446B00E377A2 /* path.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8C7846A01C404DCF0028CF06 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8C47B3851C3CD04400065548 /* Framework */;
+			targetProxy = 8C78469F1C404DCF0028CF06 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		8C47B37F1C3CCFBF00065548 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED)",
+					"$(HOME)/Library/Frameworks",
+					/Library/Frameworks,
+				);
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(HEADER_SEARCH_PATHS_QUOTED)",
+					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
+					/Library/Frameworks/SDL.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDL_image.framework/Headers",
+					/Library/Frameworks/SDL_image.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDL_mixer.framework/Headers",
+					/Library/Frameworks/SDL_mixer.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDL_ttf.framework/Headers",
+					/Library/Frameworks/SDL_ttf.framework/Headers,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				PRODUCT_NAME = CPStamp;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		8C47B3801C3CCFBF00065548 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				DEPLOYMENT_POSTPROCESSING = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED)",
+					"$(HOME)/Library/Frameworks",
+					/Library/Frameworks,
+				);
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(HEADER_SEARCH_PATHS_QUOTED)",
+					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
+					/Library/Frameworks/SDL.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDL_image.framework/Headers",
+					/Library/Frameworks/SDL_image.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDL_mixer.framework/Headers",
+					/Library/Frameworks/SDL_mixer.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDL_ttf.framework/Headers",
+					/Library/Frameworks/SDL_ttf.framework/Headers,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				PRODUCT_NAME = CPStamp;
+				SDKROOT = macosx;
+				SEPARATE_STRIP = YES;
+				STRIP_STYLE = "non-global";
+			};
+			name = Release;
+		};
+		8C47B39A1C3CD04400065548 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_CONSTANT_CONVERSION = NO;
+				CLANG_WARN_EMPTY_BODY = NO;
+				CLANG_WARN_ENUM_CONVERSION = NO;
+				CLANG_WARN_INT_CONVERSION = NO;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = NO;
+				COMBINE_HIDPI_IMAGES = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXPORTED_SYMBOLS_FILE = File.exp;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/Frameworks\"";
+				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"PACKAGE=\\\"libcpstamp\\\"",
+					"MACOSX=1",
+					"LOCALEDIR=\\\"/usr/share/locale\\\"",
+					"ENABLE_NLS=1",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_VERSION = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				GENERATE_MASTER_OBJECT_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(HEADER_SEARCH_PATHS_QUOTED)",
+					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
+					/Library/Frameworks/SDL.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDL_image.framework/Headers",
+					/Library/Frameworks/SDL_image.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDL_mixer.framework/Headers",
+					/Library/Frameworks/SDL_mixer.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDL_ttf.framework/Headers",
+					/Library/Frameworks/SDL_ttf.framework/Headers,
+					/usr/local/opt/gettext/include,
+				);
+				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/Frameworks/webp.framework/Headers\"";
+				INFOPLIST_FILE = "Info-Framework.plist";
+				INSTALL_PATH = "@rpath";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LINK_WITH_STANDARD_LIBRARIES = YES;
+				MACH_O_TYPE = mh_dylib;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = CPStamp;
+				SDKROOT = macosx;
+				SEPARATE_STRIP = YES;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		8C47B39B1C3CD04400065548 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_CONSTANT_CONVERSION = NO;
+				CLANG_WARN_EMPTY_BODY = NO;
+				CLANG_WARN_ENUM_CONVERSION = NO;
+				CLANG_WARN_INT_CONVERSION = NO;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = NO;
+				COMBINE_HIDPI_IMAGES = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEPLOYMENT_POSTPROCESSING = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXPORTED_SYMBOLS_FILE = File.exp;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/Frameworks\"";
+				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"PACKAGE=\\\"libcpstamp\\\"",
+					"MACOSX=1",
+					"LOCALEDIR=\\\"/usr/share/locale\\\"",
+					"ENABLE_NLS=1",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_VERSION = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				GENERATE_MASTER_OBJECT_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(HEADER_SEARCH_PATHS_QUOTED)",
+					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
+					/Library/Frameworks/SDL.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDL_image.framework/Headers",
+					/Library/Frameworks/SDL_image.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDL_mixer.framework/Headers",
+					/Library/Frameworks/SDL_mixer.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDL_ttf.framework/Headers",
+					/Library/Frameworks/SDL_ttf.framework/Headers,
+					/usr/local/opt/gettext/include,
+				);
+				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/Frameworks/webp.framework/Headers\"";
+				INFOPLIST_FILE = "Info-Framework.plist";
+				INSTALL_PATH = "@rpath";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LINK_WITH_STANDARD_LIBRARIES = YES;
+				MACH_O_TYPE = mh_dylib;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				PRODUCT_NAME = CPStamp;
+				SDKROOT = macosx;
+				SEPARATE_STRIP = YES;
+				STRIP_STYLE = "non-global";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
+		8C78469D1C404CBA0028CF06 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		8C78469E1C404CBA0028CF06 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8C47B37E1C3CCFBF00065548 /* Build configuration list for PBXProject "CPStamp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8C47B37F1C3CCFBF00065548 /* Debug */,
+				8C47B3801C3CCFBF00065548 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8C47B3991C3CD04400065548 /* Build configuration list for PBXNativeTarget "Framework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8C47B39A1C3CD04400065548 /* Debug */,
+				8C47B39B1C3CD04400065548 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8C78469C1C404CBA0028CF06 /* Build configuration list for PBXNativeTarget "Create DMG" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8C78469D1C404CBA0028CF06 /* Debug */,
+				8C78469E1C404CBA0028CF06 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8C47B37B1C3CCFBF00065548 /* Project object */;
+}
